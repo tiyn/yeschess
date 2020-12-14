@@ -227,7 +227,7 @@ proc gen_rook_dests(game: Game, field: int, color: Color): seq[int] =
     for move in Rook_Moves:
       dest = field+move
       target = game.pieces.get_field(dest)
-      while (target != 999 and  (ord(color) * target <= 0) or target == EnPassantID):
+      while (target != 999 and (ord(color) * target <= 0) or target == EnPassantID):
         res.add(dest)
         if (ord(color) * target < 0 and ord(color) * target > -EnPassantID):
           break
@@ -247,7 +247,7 @@ proc gen_queen_dests(game: Game, field: int, color: Color): seq[int] =
     for move in Queen_Moves:
       dest = field+move
       target = game.pieces.get_field(dest)
-      while (target != 999 and  (ord(color) * target <= 0) or target == EnPassantID):
+      while (target != 999 and (ord(color) * target <= 0) or target == EnPassantID):
         res.add(dest)
         if (ord(color) * target < 0 and ord(color) * target > -EnPassantID):
           break
@@ -267,9 +267,9 @@ proc gen_king_castle_dest(game: Game, field: int, color: Color): seq[int] =
     var half_dest: int
     var half_target: int
     for castle in King_Moves_White_Castle:
-      dest = field +  castle
+      dest = field + castle
       target = game.pieces.get_field(dest)
-      half_dest = field + (int) castle/2
+      half_dest = field + (int)castle/2
       half_target = game.pieces.get_field(half_dest)
       if (target == 999 or (target != 0)):
         continue
@@ -343,7 +343,8 @@ proc gen_pawn_double_dests(game: Game, field: int, color: Color): seq[int] =
     for doubles in Pawn_Moves_White_Double:
       dest = field + doubles * ord(color)
       target = game.pieces.get_field(dest)
-      if (game.moved.get_field(field) or (target != 0) or (game.pieces.get_field(dest+(S*ord(color))) != 0)):
+      if (game.moved.get_field(field) or (target != 0) or (
+          game.pieces.get_field(dest+(S*ord(color))) != 0)):
         continue
       res.add(dest)
     return res
@@ -380,8 +381,8 @@ proc piece_on(game: Game, color: Color, sequence: seq[int],
 proc is_attacked(game: Game, position: int, color: Color): bool =
   ## Check if a field is attacked by the opposite of `color` in a `game`.
   var attacked = false
-  attacked = attacked or game.piece_on(color, game.gen_pawn_attack_dests(position,
-      color), PawnID)
+  attacked = attacked or game.piece_on(color, game.gen_pawn_attack_dests(
+      position, color), PawnID)
   attacked = attacked or game.piece_on(color, game.gen_queen_dests(position,
       color), QueenID)
   attacked = attacked or game.piece_on(color, game.gen_king_dests(position,
@@ -429,7 +430,7 @@ proc remove_en_passant(pieces: var Pieces, color: Color): void =
   ## Removes every en passant of given `color` from the `game`.
   for field in pieces.low..pieces.high:
     if pieces.get_field(field) == ord(color) * EnPassantID:
-      pieces.set_field(field,0)
+      pieces.set_field(field, 0)
 
 proc gen_legal_knight_moves(game: Game, field: int, color: Color): seq[Move] =
   ## Generates all legal knight moves starting from `field` in a `game` for a `color`.
@@ -599,7 +600,7 @@ proc checked_move*(game: var Game, move: Move): bool {.discardable.} =
     var move: Move
     move = get_move(start, dest, color)
     if (piece == PawnID * ord(color)):
-      create_en_passant = dest in game.gen_pawn_double_dests(start,color)
+      create_en_passant = dest in game.gen_pawn_double_dests(start, color)
       captured_en_passant = (game.pieces.get_field(dest) == -1 * ord(color) * EnPassantID)
     sequence.add(game.gen_legal_moves(start, color))
     if (move in sequence):
@@ -612,10 +613,11 @@ proc checked_move*(game: var Game, move: Move): bool {.discardable.} =
         game.unchecked_move(start, dest)
       game.to_move = Color(ord(game.to_move)*(-1))
       if create_en_passant:
-        game.pieces.set_field(dest-(N*ord(color)),EnPassantID * ord(color))
+        game.pieces.set_field(dest-(N*ord(color)), EnPassantID * ord(color))
       if captured_en_passant:
-        game.pieces.set_field(dest-(N*ord(color)),0)
-      if ((90 < dest and dest < 99) or (20 < dest and dest < 29)) and game.pieces.get_field(dest) == PawnID * ord(color):
+        game.pieces.set_field(dest-(N*ord(color)), 0)
+      if ((90 < dest and dest < 99) or (20 < dest and dest < 29)) and
+          game.pieces.get_field(dest) == PawnID * ord(color):
         game.pieces.set_field(dest, prom)
       return true
   except IndexDefect, ValueError:

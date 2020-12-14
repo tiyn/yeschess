@@ -1,5 +1,7 @@
 # ychess
 
+![ychess-logo](ychess.png)
+
 ychess is a chess implementation written in nim.
 A chess engine is planned.
 

@@ -644,6 +644,7 @@ proc castling(game: var Game, kstart: int, dest_kingside: bool,
         return false
       game.uncheckedMove(kstart, kdest)
       game.uncheckedMove(rstart, rdest)
+      game.toMove = Color(ord(game.toMove)*(-1))
       return true
     return false
   except IndexDefect, ValueError:

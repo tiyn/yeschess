@@ -5,11 +5,6 @@
 ychess is a chess implementation written in nim.
 A chess engine is planned.
 
-## Todo
-
-- draw by
-  - 50-move rule
-
 ## Usage
 
 Simply download the code and run `nim c -r game.nim`.

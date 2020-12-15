@@ -22,6 +22,7 @@ type
     toMove*: Color
     previousBoard*: seq[Board]
     previousCastleRights*: seq[CastleRights]
+    fiftyMoveCounter: int
   ## Move as object
   Move* = object
     start: int
@@ -231,7 +232,7 @@ proc initMoved(): Moved =
 proc initGame*(): Game =
   ## Create and return a Game object.
   let game = Game(board: initBoard(), moved: initMoved(),
-      to_move: Color.White, previousBoard: @[], previousCastleRights: @[])
+      to_move: Color.White, previousBoard: @[], previousCastleRights: @[], fiftyMoveCounter: 0)
   return game
 
 proc initGame*(board: array[0..63, int], color: Color): Game =
@@ -244,7 +245,7 @@ proc initGame*(board: array[0..63, int], color: Color): Game =
     same_piece = (board[ind] != compare[ind])
     moved.setField(ind, same_piece)
   let game = Game(board: board, moved: moved,
-      to_move: color, previousBoard: @[], previousCastleRights: @[])
+      to_move: color, previousBoard: @[], previousCastleRights: @[], fiftyMoveCounter: 0)
   return game
 
 proc getMove*(start: int, dest: int, prom: int, color: Color): Move =
@@ -745,13 +746,17 @@ proc checkedMove*(game: var Game, move: Move): bool {.discardable.} =
       return false
     var sequence = newSeq[Move]()
     let piece = game.board.getField(start)
-    var create_en_passant = false
-    var captured_en_passant = false
+    var createEnPassant = false
+    var capturedEnPassant = false
+    var fiftyMoveRuleReset = false
     var move: Move
     move = getMove(start, dest, color)
     if (piece == PawnID * ord(color)):
-      create_en_passant = dest in game.genPawnDoubleDests(start, color)
-      captured_en_passant = (game.board.getField(dest) == -1 * ord(color) * EnPassantID)
+      createEnPassant = dest in game.genPawnDoubleDests(start, color)
+      capturedEnPassant = (game.board.getField(dest) == -1 * ord(color) * EnPassantID)
+      fiftyMoveRuleReset = true
+    if (game.board.getField(move.dest) != 0):
+      fiftyMoveRuleReset = true
     sequence.add(game.genLegalMoves(start, color))
     if (move in sequence):
       game.board.removeEnPassant(color)
@@ -762,9 +767,9 @@ proc checkedMove*(game: var Game, move: Move): bool {.discardable.} =
       else:
         game.uncheckedMove(start, dest)
       game.toMove = Color(ord(game.toMove)*(-1))
-      if create_en_passant:
+      if createEnPassant:
         game.board.setField(dest-(N*ord(color)), EnPassantID * ord(color))
-      if captured_en_passant:
+      if capturedEnPassant:
         game.board.setField(dest-(N*ord(color)), 0)
       if ((90 < dest and dest < 99) or (20 < dest and dest < 29)) and
           game.board.getField(dest) == PawnID * ord(color):
@@ -773,6 +778,9 @@ proc checkedMove*(game: var Game, move: Move): bool {.discardable.} =
       var prevCastle = game.previousCastleRights
       game.previousBoard.add(game.board)
       game.previousCastleRights.add(game.moved.genCastleRights())
+      game.fiftyMoveCounter = game.fiftyMoveCounter + 1
+      if fiftyMoveRuleReset:
+        game.fiftyMoveCounter = 0
       return true
   except IndexDefect, ValueError:
     return false
@@ -796,9 +804,13 @@ proc threeMoveRep(game: Game): bool =
       reps = reps + 1
   return reps >= 3
 
+proc fiftyMoveRule(game: Game): bool =
+  ## Checks if a draw with the fifty move rule is available in a `game`.
+  return game.fiftyMoveCounter >= 100
+
 proc isDrawClaimable*(game: Game): bool =
   ## Checks if a draw is claimable by either player.
-  return game.threeMoveRep()
+  return game.threeMoveRep() or game.fiftyMoveRule()
 
 proc isStalemate*(game: Game, color: Color): bool =
   ## Checks if a player of a given `color` in a `game` is stalemate.

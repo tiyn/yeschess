@@ -6,7 +6,7 @@ import ./chess
 proc runGame(): void =
   var game = initGame()
   game.echoBoard(game.toMove)
-  while not game.isCheckmate(game.toMove):
+  while not game.isCheckmate(game.toMove) and not game.isStalemate(game.toMove):
     echo "Make a move"
     echo game.toMove
     var move = readLine(stdin)

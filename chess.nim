@@ -1,5 +1,6 @@
 import tables
 from strutils import parseInt
+import algorithm
 
 type
   Color* = enum
@@ -8,18 +9,26 @@ type
   Board* = array[0..119, int]
   ## Board that checks if pieces moved
   Moved* = array[0..119, bool]
+  ## Castle rights for each player
+  CastleRights = tuple
+    wk: bool
+    wq: bool
+    bk: bool
+    bq: bool
   ## Game as object of different values
   Game* = object
     board*: Board
     moved: Moved
     toMove*: Color
+    previousBoard*: seq[Board]
+    previousCastleRights*: seq[CastleRights]
   ## Move as object
   Move* = object
     start: int
     dest: int
     color: Color
     prom: int
-  ## Amount of pieces
+  ## Amount of pieces of a player
   Pieces = tuple
     p: int
     k: int
@@ -222,7 +231,7 @@ proc initMoved(): Moved =
 proc initGame*(): Game =
   ## Create and return a Game object.
   let game = Game(board: initBoard(), moved: initMoved(),
-      to_move: Color.White)
+      to_move: Color.White, previousBoard: @[], previousCastleRights: @[])
   return game
 
 proc initGame*(board: array[0..63, int], color: Color): Game =
@@ -235,7 +244,7 @@ proc initGame*(board: array[0..63, int], color: Color): Game =
     same_piece = (board[ind] != compare[ind])
     moved.setField(ind, same_piece)
   let game = Game(board: board, moved: moved,
-      to_move: color)
+      to_move: color, previousBoard: @[], previousCastleRights: @[])
   return game
 
 proc getMove*(start: int, dest: int, prom: int, color: Color): Move =
@@ -293,6 +302,18 @@ proc indToField*(ind: int): string =
   for file, i in FileChar:
     if FileChar[file] == file_ind:
       return $file & $line
+
+proc genCastleRights(moved: Moved): CastleRights =
+  ## Generate rights to castle from given `moved`
+  let wk = not moved.getField(fieldToInd("e1")) and not moved.getField(
+      fieldToInd("h1"))
+  let wq = not moved.getField(fieldToInd("e1")) and not moved.getField(
+      fieldToInd("a1"))
+  let bk = not moved.getField(fieldToInd("e8")) and not moved.getField(
+      fieldToInd("h8"))
+  let bq = not moved.getField(fieldToInd("e8")) and not moved.getField(
+      fieldToInd("a8"))
+  return (wk, wq, bk, bq)
 
 proc notationToMove*(notation: string, color: Color): Move =
   ## Convert simplified algebraic chess `notation` to a move object, color of player is `color`.
@@ -709,6 +730,9 @@ proc castling(game: var Game, kstart: int, dest_kingside: bool,
   except IndexDefect, ValueError:
     return false
 
+proc getPrevBoard*(game: Game): seq[Board] =
+  return game.previousBoard
+
 proc checkedMove*(game: var Game, move: Move): bool {.discardable.} =
   ## Tries to make a move in a given `game` with the piece of a given `color` from `start` to `dest`.
   ## This process checks for the legality of the move and performs the switch of `game.to_move`
@@ -745,6 +769,10 @@ proc checkedMove*(game: var Game, move: Move): bool {.discardable.} =
       if ((90 < dest and dest < 99) or (20 < dest and dest < 29)) and
           game.board.getField(dest) == PawnID * ord(color):
         game.board.setField(dest, prom)
+      var prevBoard = game.previousBoard
+      var prevCastle = game.previousCastleRights
+      game.previousBoard.add(game.board)
+      game.previousCastleRights.add(game.moved.genCastleRights())
       return true
   except IndexDefect, ValueError:
     return false
@@ -756,6 +784,21 @@ proc hasNoMoves(game: Game, color: Color): bool =
 proc isCheckmate*(game: Game, color: Color): bool =
   ## Checks if a player of a given `color` in a `game` is checkmate.
   return game.hasNoMoves(color) and game.isInCheck(color)
+
+proc threeMoveRep(game: Game): bool =
+  ## Checks if a `rep`-times repitition happened on the last move of the `game`.
+  var lastState = game.previousBoard[game.previousBoard.high]
+  var lastCastleRights = game.previousCastleRights[game.previousBoard.high]
+  var reps = 0
+  for stateInd in (game.previousBoard.low)..(game.previousBoard.high):
+    if (game.previousBoard[stateInd] == lastState and game.previousCastleRights[
+        stateInd] == lastCastleRights):
+      reps = reps + 1
+  return reps >= 3
+
+proc isDrawClaimable*(game: Game): bool =
+  ## Checks if a draw is claimable by either player.
+  return game.threeMoveRep()
 
 proc isStalemate*(game: Game, color: Color): bool =
   ## Checks if a player of a given `color` in a `game` is stalemate.

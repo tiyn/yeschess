@@ -268,6 +268,31 @@ testSuite GameTest of TestSuite:
     self.check(not self.game.isStalemate(Color.Black))
     self.check(not self.game.isStalemate(Color.White))
 
+  method testIsDrawClaimableThreeFoldRepTrue() =
+    self.setup()
+    self.game.checkedMove(notationToMove("g1f3", Color.White))
+    self.game.checkedMove(notationToMove("g8f6", Color.Black))
+    self.game.checkedMove(notationToMove("f3g1", Color.White))
+    self.game.checkedMove(notationToMove("f6g8", Color.Black))
+    self.game.checkedMove(notationToMove("g1f3", Color.White))
+    self.game.checkedMove(notationToMove("g8f6", Color.Black))
+    self.game.checkedMove(notationToMove("f3g1", Color.White))
+    self.game.checkedMove(notationToMove("f6g8", Color.Black))
+    self.game.checkedMove(notationToMove("g1f3", Color.White))
+    self.check(self.game.isDrawClaimable())
+
+  method testIsDrawClaimableThreeFoldRepFalse() =
+    self.setup()
+    self.game.checkedMove(notationToMove("g1f3", Color.White))
+    self.game.checkedMove(notationToMove("g8f6", Color.Black))
+    self.game.checkedMove(notationToMove("f3g1", Color.White))
+    self.game.checkedMove(notationToMove("f6g8", Color.Black))
+    self.game.checkedMove(notationToMove("g1f3", Color.White))
+    self.game.checkedMove(notationToMove("g8f6", Color.Black))
+    self.game.checkedMove(notationToMove("f3g1", Color.White))
+    self.game.checkedMove(notationToMove("f6g8", Color.Black))
+    self.check(not self.game.isDrawClaimable())
+
   ## Tests for Pawn moves
   method testCheckedMovePawnSingleTrue() =
     self.setup()

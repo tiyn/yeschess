@@ -8,7 +8,6 @@ A chess engine is planned.
 ## Todo
 
 - draw by
-  - 3-fold repitition
   - 50-move rule
 
 ## Usage

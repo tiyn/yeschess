@@ -108,6 +108,166 @@ testSuite GameTest of TestSuite:
     ], Color.Black)
     self.check(self.game.isStalemate(Color.Black))
 
+  method testIsStalemateInsufficientMaterialTrue() =
+    self.game = initGame([
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, WKing, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, BKing, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0
+    ], Color.Black)
+    self.check(self.game.isStalemate(Color.Black))
+    self.check(self.game.isStalemate(Color.White))
+    self.game = initGame([
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, WKing, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, WKnight,
+      0, 0, WKnight, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, BKing, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0
+    ], Color.Black)
+    self.check(self.game.isStalemate(Color.Black))
+    self.check(self.game.isStalemate(Color.White))
+    self.game = initGame([
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, WKing, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, BKnight,
+      0, 0, BKnight, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, BKing, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0
+    ], Color.Black)
+    self.check(self.game.isStalemate(Color.Black))
+    self.check(self.game.isStalemate(Color.White))
+    self.game = initGame([
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, WKing, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, BKnight,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, BKing, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0
+    ], Color.Black)
+    self.check(self.game.isStalemate(Color.Black))
+    self.check(self.game.isStalemate(Color.White))
+    self.game = initGame([
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, WKing, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, WKnight,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, BKing, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0
+    ], Color.Black)
+    self.check(self.game.isStalemate(Color.Black))
+    self.check(self.game.isStalemate(Color.White))
+    self.game = initGame([
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, WKing, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, BBishop,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, BKing, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0
+    ], Color.Black)
+    self.check(self.game.isStalemate(Color.Black))
+    self.check(self.game.isStalemate(Color.White))
+    self.game = initGame([
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, WKing, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, WBishop,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, BKing, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0
+    ], Color.Black)
+    self.check(self.game.isStalemate(Color.Black))
+    self.check(self.game.isStalemate(Color.White))
+
+  method testIsStalemateInsufficientMaterialFalse() =
+    self.game = initGame([
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, WKing, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, BPawn,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, BKing, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0
+    ], Color.Black)
+    self.check(not self.game.isStalemate(Color.Black))
+    self.check(not self.game.isStalemate(Color.White))
+    self.game = initGame([
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, WKing, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, WPawn,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, BKing, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0
+    ], Color.Black)
+    self.check(not self.game.isStalemate(Color.Black))
+    self.check(not self.game.isStalemate(Color.White))
+    self.game = initGame([
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, WKing, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, BRook,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, BKing, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0
+    ], Color.Black)
+    self.check(not self.game.isStalemate(Color.Black))
+    self.check(not self.game.isStalemate(Color.White))
+    self.game = initGame([
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, WKing, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, WRook,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, BKing, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0
+    ], Color.Black)
+    self.check(not self.game.isStalemate(Color.Black))
+    self.check(not self.game.isStalemate(Color.White))
+    self.game = initGame([
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, WKing, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, WBishop, 0, 0, 0, 0, 0, BPawn,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, BKing, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0
+    ], Color.Black)
+    self.check(not self.game.isStalemate(Color.Black))
+    self.check(not self.game.isStalemate(Color.White))
+    self.game = initGame([
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, WKing, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, BBishop, 0, 0, 0, 0, WPawn,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, BKing, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0
+    ], Color.Black)
+    self.check(not self.game.isStalemate(Color.Black))
+    self.check(not self.game.isStalemate(Color.White))
+
   ## Tests for Pawn moves
   method testCheckedMovePawnSingleTrue() =
     self.setup()
@@ -405,7 +565,7 @@ testSuite GameTest of TestSuite:
         test = self.game.checkedMove(notationToMove($file & "5" & $str[ind+1] &
             "6", Color.White))
         self.check(test)
-        test = (0 == self.game.pieces.getField(fieldToInd($str[ind+1] & "5")))
+        test = (0 == self.game.board.getField(fieldToInd($str[ind+1] & "5")))
         self.check(test)
     str.reverse()
     for ind, file in str:
@@ -423,7 +583,7 @@ testSuite GameTest of TestSuite:
         test = self.game.checkedMove(notationToMove($file & "5" & $str[ind+1] &
             "6", Color.White))
         self.check(test)
-        test = (0 == self.game.pieces.getField(fieldToInd($str[ind+1] & "5")))
+        test = (0 == self.game.board.getField(fieldToInd($str[ind+1] & "5")))
         self.check(test)
 
   method testCheckedMovePawnEnPassantTrueBlack() =
@@ -455,7 +615,7 @@ testSuite GameTest of TestSuite:
         test = self.game.checkedMove(notationToMove($file & "4" & $str[ind+1] &
             "3", Color.Black))
         self.check(test)
-        test = (0 == self.game.pieces.getField(fieldToInd($str[ind+1] & "4")))
+        test = (0 == self.game.board.getField(fieldToInd($str[ind+1] & "4")))
         self.check(test)
     str.reverse()
     for ind, file in str:
@@ -473,7 +633,7 @@ testSuite GameTest of TestSuite:
         test = self.game.checkedMove(notationToMove($file & "4" & $str[ind+1] &
             "3", Color.Black))
         self.check(test)
-        test = (0 == self.game.pieces.getField(fieldToInd($str[ind+1] & "4")))
+        test = (0 == self.game.board.getField(fieldToInd($str[ind+1] & "4")))
         self.check(test)
 
   method testCheckedMovePawnEnPassantFalseWhite() =
@@ -505,7 +665,7 @@ testSuite GameTest of TestSuite:
         test = self.game.checkedMove(notationToMove($file & "5" & $str[ind+1] &
             "6", Color.White))
         self.check(not test)
-        test = (0 == self.game.pieces.getField(fieldToInd($str[ind+1] & "5")))
+        test = (0 == self.game.board.getField(fieldToInd($str[ind+1] & "5")))
         self.check(not test)
     str.reverse()
     for ind, file in str:
@@ -523,7 +683,7 @@ testSuite GameTest of TestSuite:
         test = self.game.checkedMove(notationToMove($file & "5" & $str[ind+1] &
             "6", Color.White))
         self.check(not test)
-        test = (0 == self.game.pieces.getField(fieldToInd($str[ind+1] & "5")))
+        test = (0 == self.game.board.getField(fieldToInd($str[ind+1] & "5")))
         self.check(not test)
 
   method testCheckedMovePawnEnPassantFalseBlack() =
@@ -555,7 +715,7 @@ testSuite GameTest of TestSuite:
         test = self.game.checkedMove(notationToMove($file & "4" & $str[ind+1] &
             "3", Color.Black))
         self.check(not test)
-        test = (0 == self.game.pieces.getField(fieldToInd($str[ind+1] & "4")))
+        test = (0 == self.game.board.getField(fieldToInd($str[ind+1] & "4")))
         self.check(not test)
     str.reverse()
     for ind, file in str:
@@ -573,7 +733,7 @@ testSuite GameTest of TestSuite:
         test = self.game.checkedMove(notationToMove($file & "4" & $str[ind+1] &
             "3", Color.Black))
         self.check(not test)
-        test = (0 == self.game.pieces.getField(fieldToInd($str[ind+1] & "4")))
+        test = (0 == self.game.board.getField(fieldToInd($str[ind+1] & "4")))
         self.check(not test)
 
   ## Tests for King moves

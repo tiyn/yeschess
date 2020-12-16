@@ -20,8 +20,8 @@ type
     board*: Board
     moved: Moved
     toMove*: Color
-    previousBoard*: seq[Board]
-    previousCastleRights*: seq[CastleRights]
+    previousBoard: seq[Board]
+    previousCastleRights: seq[CastleRights]
     fiftyMoveCounter: int
   ## Move as object
   Move* = object
@@ -121,19 +121,14 @@ const InsufficientMaterial = @[
   (0, 2, 0, 0, 0)
   ]
 
-proc getField*(board: Board, field: int): int =
-  return board[field]
-
 proc setField(board: var Board, field: int, val: int): bool {.discardable.} =
-  if (val in PieceChar):
-    try:
+  try:
+    if (val in PieceChar):
       board[field] = val
       return true
-    except Exception:
-      return false
-
-proc getField*(moved: Moved, field: int): bool =
-  return moved[field]
+    return false
+  except Exception:
+    return false
 
 proc setField(moved: var Moved, field: int, val: bool): bool {.discardable.} =
   try:
@@ -155,7 +150,7 @@ proc checkInsufficientMaterial(board: Board): bool =
   var br = 0
   var bq = 0
   for field in board.low..board.high:
-    case board.getField(field):
+    case board[field]:
       of WPawn:
         wp = wp + 1
       of BPawn:
@@ -265,7 +260,7 @@ proc echoBoard*(game: Game, color: Color) =
   var line_str = ""
   if (color == Color.Black):
     for i in countup(0, len(game.board)-1):
-      if (game.board.getField(i) == 999):
+      if (game.board[i] == 999):
         continue
       line_str &= PieceChar[game.board[i]] & " "
       if ((i+2) %% 10 == 0):
@@ -274,7 +269,7 @@ proc echoBoard*(game: Game, color: Color) =
     echo "h g f e d c b a"
   else:
     for i in countdown(len(game.board)-1, 0):
-      if (game.board.getField(i) == 999):
+      if (game.board[i] == 999):
         continue
       line_str &= PieceChar[game.board[i]] & " "
       if ((i-1) %% 10 == 0):
@@ -306,14 +301,10 @@ proc indToField*(ind: int): string =
 
 proc genCastleRights(moved: Moved): CastleRights =
   ## Generate rights to castle from given `moved`
-  let wk = not moved.getField(fieldToInd("e1")) and not moved.getField(
-      fieldToInd("h1"))
-  let wq = not moved.getField(fieldToInd("e1")) and not moved.getField(
-      fieldToInd("a1"))
-  let bk = not moved.getField(fieldToInd("e8")) and not moved.getField(
-      fieldToInd("h8"))
-  let bq = not moved.getField(fieldToInd("e8")) and not moved.getField(
-      fieldToInd("a8"))
+  let wk = not moved[fieldToInd("e1")] and not moved[fieldToInd("h1")]
+  let wq = not moved[fieldToInd("e1")] and not moved[fieldToInd("a1")]
+  let bk = not moved[fieldToInd("e8")] and not moved[fieldToInd("h8")]
+  let bq = not moved[fieldToInd("e8")] and not moved[fieldToInd("a8")]
   return (wk, wq, bk, bq)
 
 proc notationToMove*(notation: string, color: Color): Move =
@@ -350,14 +341,14 @@ proc genBishopDests(game: Game, field: int, color: Color): seq[int] =
     var target: int
     for move in Bishop_Moves:
       dest = field+move
-      target = game.board.getField(dest)
+      target = game.board[dest]
       while (target != 999 and (ord(color) * target <= 0) or target ==
           EnPassantID or target == -EnPassantID):
         res.add(dest)
         if (ord(color) * target < 0 and ord(color) * target > -EnPassantID):
           break
         dest = dest+move
-        target = game.board.getField(dest)
+        target = game.board[dest]
     return res
   except IndexDefect:
     return @[]
@@ -371,14 +362,14 @@ proc genRookDests(game: Game, field: int, color: Color): seq[int] =
     var target: int
     for move in Rook_Moves:
       dest = field+move
-      target = game.board.getField(dest)
+      target = game.board[dest]
       while (target != 999 and (ord(color) * target <= 0) or target ==
           EnPassantID or target == -EnPassantID):
         res.add(dest)
         if (ord(color) * target < 0 and ord(color) * target > -EnPassantID):
           break
         dest = dest+move
-        target = game.board.getField(dest)
+        target = game.board[dest]
     return res
   except IndexDefect:
     return @[]
@@ -392,14 +383,14 @@ proc genQueenDests(game: Game, field: int, color: Color): seq[int] =
     var target: int
     for move in Queen_Moves:
       dest = field+move
-      target = game.board.getField(dest)
+      target = game.board[dest]
       while (target != 999 and (ord(color) * target <= 0) or target ==
           EnPassantID or target == -EnPassantID):
         res.add(dest)
         if (ord(color) * target < 0 and ord(color) * target > -EnPassantID):
           break
         dest = dest+move
-        target = game.board.getField(dest)
+        target = game.board[dest]
     return res
   except IndexDefect:
     return @[]
@@ -415,9 +406,9 @@ proc genKingCastleDest(game: Game, field: int, color: Color): seq[int] =
     var half_target: int
     for castle in King_Moves_White_Castle:
       dest = field + castle
-      target = game.board.getField(dest)
+      target = game.board[dest]
       half_dest = field + (int)castle/2
-      half_target = game.board.getField(half_dest)
+      half_target = game.board[half_dest]
       if (target == 999 or (target != 0)):
         continue
       if (half_target == 999 or (half_target != 0)):
@@ -437,7 +428,7 @@ proc genKingDests(game: Game, field: int, color: Color): seq[int] =
     var target: int
     for move in King_Moves:
       dest = field + move
-      target = game.board.getField(dest)
+      target = game.board[dest]
       if (target == 999 or (ord(color) * target > 0 and ord(color) * target != EnPassantID)):
         continue
       res.add(dest)
@@ -455,7 +446,7 @@ proc genKnightDests(game: Game, field: int, color: Color): seq[int] =
     var target: int
     for move in Knight_Moves:
       dest = field + move
-      target = game.board.getField(dest)
+      target = game.board[dest]
       if (target == 999 or (ord(color) * target > 0 and ord(color) * target != EnPassantID)):
         continue
       res.add(dest)
@@ -472,7 +463,7 @@ proc genPawnAttackDests(game: Game, field: int, color: Color): seq[int] =
     var target: int
     for attacks in Pawn_Moves_White_Attack:
       dest = field + (attacks * ord(color))
-      target = game.board.getField(dest)
+      target = game.board[dest]
       if (target == 999 or ord(color) * target >= 0):
         continue
       res.add(dest)
@@ -489,9 +480,9 @@ proc genPawnDoubleDests(game: Game, field: int, color: Color): seq[int] =
     var target: int
     for doubles in Pawn_Moves_White_Double:
       dest = field + doubles * ord(color)
-      target = game.board.getField(dest)
-      if (game.moved.getField(field) or (target != 0) or (
-          game.board.getField(dest+(S*ord(color))) != 0)):
+      target = game.board[dest]
+      if (game.moved[field] or (target != 0) or (
+          game.board[dest+(S*ord(color))] != 0)):
         continue
       res.add(dest)
     return res
@@ -507,7 +498,7 @@ proc genPawnDests(game: Game, field: int, color: Color): seq[int] =
     var target: int
     for move in Pawn_Moves_White:
       dest = field + move * ord(color)
-      target = game.board.getField(dest)
+      target = game.board[dest]
       if (target != 0 and target != ord(color) * EnPassantID):
         continue
       res.add(dest)
@@ -521,7 +512,7 @@ proc pieceOn(game: Game, color: Color, sequence: seq[int],
     pieceID: int): bool =
   ## Check if a piece with `pieceID` of a given `color` is in a field described in a `sequence` in a `game`.
   for check in sequence:
-    if game.board.getField(check) == ord(color) * -1 * pieceID:
+    if game.board[check] == ord(color) * -1 * pieceID:
       return true
   return false
 
@@ -546,7 +537,7 @@ proc isInCheck*(game: Game, color: Color): bool =
   ## Check if the King of a given `color` is in check in a `game`.
   var king_pos: int
   for i in countup(0, game.board.high):
-    if game.board.getField(i) == ord(color) * KingID:
+    if game.board[i] == ord(color) * KingID:
       king_pos = i
   return game.isAttacked(king_pos, color)
 
@@ -555,7 +546,7 @@ proc uncheckedMove(game: var Game, start: int, dest: int): bool {.discardable.} 
   ## Doesnt check boundaries, checks, movement.
   ## returns true if the piece moved, else false
   try:
-    let piece = game.board.getField(start)
+    let piece = game.board[start]
     if game.board.setField(start, 0):
       if game.board.setField(dest, piece):
         game.moved.setField(start, true)
@@ -576,12 +567,12 @@ proc moveLeadsToCheck(game: Game, start: int, dest: int,
 proc removeEnPassant(board: var Board, color: Color): void =
   ## Removes every en passant of given `color` from the `game`.
   for field in board.low..board.high:
-    if board.getField(field) == ord(color) * EnPassantID:
+    if board[field] == ord(color) * EnPassantID:
       board.setField(field, 0)
 
 proc genLegalKnightMoves(game: Game, field: int, color: Color): seq[Move] =
   ## Generates all legal knight moves starting from `field` in a `game` for a `color`.
-  if game.board.getField(field) != KnightID * ord(color):
+  if game.board[field] != KnightID * ord(color):
     return @[]
   var res = newSeq[Move]()
   var moves = game.genKnightDests(field, color)
@@ -592,7 +583,7 @@ proc genLegalKnightMoves(game: Game, field: int, color: Color): seq[Move] =
 
 proc genLegalBishopMoves(game: Game, field: int, color: Color): seq[Move] =
   ## Generates all legal bishop moves starting from `field` in a `game` for a `color`.
-  if game.board.getField(field) != BishopID * ord(color):
+  if game.board[field] != BishopID * ord(color):
     return @[]
   var res = newSeq[Move]()
   var moves = game.genBishopDests(field, color)
@@ -603,7 +594,7 @@ proc genLegalBishopMoves(game: Game, field: int, color: Color): seq[Move] =
 
 proc genLegalRookMoves(game: Game, field: int, color: Color): seq[Move] =
   ## Generates all legal rook moves starting from `field` in a `game` for a `color`.
-  if game.board.getField(field) != RookID * ord(color):
+  if game.board[field] != RookID * ord(color):
     return @[]
   var res = newSeq[Move]()
   var moves = game.genRookDests(field, color)
@@ -614,7 +605,7 @@ proc genLegalRookMoves(game: Game, field: int, color: Color): seq[Move] =
 
 proc genLegalQueenMoves(game: Game, field: int, color: Color): seq[Move] =
   ## Generates all legal queen moves starting from `field` in a `game` for a `color`.
-  if game.board.getField(field) != QueenID * ord(color):
+  if game.board[field] != QueenID * ord(color):
     return @[]
   var res = newSeq[Move]()
   var moves = game.genQueenDests(field, color)
@@ -625,7 +616,7 @@ proc genLegalQueenMoves(game: Game, field: int, color: Color): seq[Move] =
 
 proc genLegalKingMoves(game: Game, field: int, color: Color): seq[Move] =
   ## Generates all legal king moves starting from `field` in a `game` for a `color`.
-  if game.board.getField(field) != KingID * ord(color):
+  if game.board[field] != KingID * ord(color):
     return @[]
   var res = newSeq[Move]()
   var moves = game.genKingDests(field, color)
@@ -650,7 +641,7 @@ proc genPawnPromotion(move: Move, color: Color): seq[Move] =
 
 proc genLegalPawnMoves(game: Game, field: int, color: Color): seq[Move] =
   ## Generates all legal pawn moves starting from `field` in a `game` for a `color`.
-  if game.board.getField(field) != PawnID * ord(color):
+  if game.board[field] != PawnID * ord(color):
     return @[]
   var res = newSeq[Move]()
   var moves = game.genPawnDests(field, color)
@@ -666,7 +657,7 @@ proc genLegalPawnMoves(game: Game, field: int, color: Color): seq[Move] =
 proc genLegalMoves*(game: Game, field: int, color: Color): seq[Move] =
   ## Generates all legal moves starting from `field` in a `game` for a `color`.
   var legal_moves = newSeq[Move]()
-  var target = ord(color) * game.board.getField(field)
+  var target = ord(color) * game.board[field]
   if 0 < target and target < EnPassantID:
     legal_moves = case target:
       of PawnID:
@@ -711,7 +702,7 @@ proc castling(game: var Game, kstart: int, dest_kingside: bool,
       rstart = kstart + (W+W+W+W)
       rdest = rstart + (E+E+E)
       kdest = kstart + (W+W)
-    if not game.moved.getField(kstart) and not game.moved.getField(rstart):
+    if not game.moved[kstart] and not game.moved[rstart]:
       var check = false
       if (dest_kingside):
         check = check or game.isAttacked(kstart, color)
@@ -745,7 +736,7 @@ proc checkedMove*(game: var Game, move: Move): bool {.discardable.} =
     if game.toMove != color:
       return false
     var sequence = newSeq[Move]()
-    let piece = game.board.getField(start)
+    let piece = game.board[start]
     var createEnPassant = false
     var capturedEnPassant = false
     var fiftyMoveRuleReset = false
@@ -753,9 +744,9 @@ proc checkedMove*(game: var Game, move: Move): bool {.discardable.} =
     move = getMove(start, dest, color)
     if (piece == PawnID * ord(color)):
       createEnPassant = dest in game.genPawnDoubleDests(start, color)
-      capturedEnPassant = (game.board.getField(dest) == -1 * ord(color) * EnPassantID)
+      capturedEnPassant = (game.board[dest] == -1 * ord(color) * EnPassantID)
       fiftyMoveRuleReset = true
-    if (game.board.getField(move.dest) != 0):
+    if (game.board[move.dest] != 0):
       fiftyMoveRuleReset = true
     sequence.add(game.genLegalMoves(start, color))
     if (move in sequence):
@@ -772,7 +763,7 @@ proc checkedMove*(game: var Game, move: Move): bool {.discardable.} =
       if capturedEnPassant:
         game.board.setField(dest-(N*ord(color)), 0)
       if ((90 < dest and dest < 99) or (20 < dest and dest < 29)) and
-          game.board.getField(dest) == PawnID * ord(color):
+          game.board[dest] == PawnID * ord(color):
         game.board.setField(dest, prom)
       var prevBoard = game.previousBoard
       var prevCastle = game.previousCastleRights

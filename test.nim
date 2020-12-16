@@ -930,7 +930,7 @@ testSuite GameTest of TestSuite:
         test = self.game.checkedMove(notationToMove($file & "5" & $str[ind+1] &
             "6", Color.White))
         self.check(test)
-        test = (0 == self.game.board.getField(fieldToInd($str[ind+1] & "5")))
+        test = (0 == self.game.board[fieldToInd($str[ind+1] & "5")])
         self.check(test)
     str.reverse()
     for ind, file in str:
@@ -948,7 +948,7 @@ testSuite GameTest of TestSuite:
         test = self.game.checkedMove(notationToMove($file & "5" & $str[ind+1] &
             "6", Color.White))
         self.check(test)
-        test = (0 == self.game.board.getField(fieldToInd($str[ind+1] & "5")))
+        test = (0 == self.game.board[fieldToInd($str[ind+1] & "5")])
         self.check(test)
 
   method testCheckedMovePawnEnPassantTrueBlack() =
@@ -980,7 +980,7 @@ testSuite GameTest of TestSuite:
         test = self.game.checkedMove(notationToMove($file & "4" & $str[ind+1] &
             "3", Color.Black))
         self.check(test)
-        test = (0 == self.game.board.getField(fieldToInd($str[ind+1] & "4")))
+        test = (0 == self.game.board[fieldToInd($str[ind+1] & "4")])
         self.check(test)
     str.reverse()
     for ind, file in str:
@@ -998,7 +998,7 @@ testSuite GameTest of TestSuite:
         test = self.game.checkedMove(notationToMove($file & "4" & $str[ind+1] &
             "3", Color.Black))
         self.check(test)
-        test = (0 == self.game.board.getField(fieldToInd($str[ind+1] & "4")))
+        test = (0 == self.game.board[fieldToInd($str[ind+1] & "4")])
         self.check(test)
 
   method testCheckedMovePawnEnPassantFalseWhite() =
@@ -1030,7 +1030,7 @@ testSuite GameTest of TestSuite:
         test = self.game.checkedMove(notationToMove($file & "5" & $str[ind+1] &
             "6", Color.White))
         self.check(not test)
-        test = (0 == self.game.board.getField(fieldToInd($str[ind+1] & "5")))
+        test = (0 == self.game.board[fieldToInd($str[ind+1] & "5")])
         self.check(not test)
     str.reverse()
     for ind, file in str:
@@ -1048,7 +1048,7 @@ testSuite GameTest of TestSuite:
         test = self.game.checkedMove(notationToMove($file & "5" & $str[ind+1] &
             "6", Color.White))
         self.check(not test)
-        test = (0 == self.game.board.getField(fieldToInd($str[ind+1] & "5")))
+        test = (0 == self.game.board[fieldToInd($str[ind+1] & "5")])
         self.check(not test)
 
   method testCheckedMovePawnEnPassantFalseBlack() =
@@ -1080,7 +1080,7 @@ testSuite GameTest of TestSuite:
         test = self.game.checkedMove(notationToMove($file & "4" & $str[ind+1] &
             "3", Color.Black))
         self.check(not test)
-        test = (0 == self.game.board.getField(fieldToInd($str[ind+1] & "4")))
+        test = (0 == self.game.board[fieldToInd($str[ind+1] & "4")])
         self.check(not test)
     str.reverse()
     for ind, file in str:
@@ -1098,7 +1098,7 @@ testSuite GameTest of TestSuite:
         test = self.game.checkedMove(notationToMove($file & "4" & $str[ind+1] &
             "3", Color.Black))
         self.check(not test)
-        test = (0 == self.game.board.getField(fieldToInd($str[ind+1] & "4")))
+        test = (0 == self.game.board[fieldToInd($str[ind+1] & "4")])
         self.check(not test)
 
   ## Tests for King moves

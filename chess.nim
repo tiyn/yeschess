@@ -10,9 +10,8 @@ type
     ## `Board` saves the position of the chess pieces.
   Moved* = array[0..119, bool] ## \
     ## `Moved` saves the position of squares a piece moved on or from.
-
   CastleRights = tuple
-    # `CastleRights` contains the rights to castling for each player.
+    ## `CastleRights` contains the rights to castling for each player.
     wk: bool # `wk` describes White kingside castle
     wq: bool # `wq` describes White queenside castle
     bk: bool # `bk` describes Black kingside castle
@@ -32,8 +31,8 @@ type
     color: Color
     prom: int
   PieceAmount = tuple
-    # `PieceAmount` describes the number of pieces of a certain type a/both
-    # player/s  has/have.
+    ## `PieceAmount` describes the number of pieces of a certain type a/both
+    ## player/s  has/have.
     p: int # `p` describes the amount of pawns.
     n: int # `n` describes the amount of knights.
     b: int # `b` describes the amount of bishops.
@@ -41,69 +40,79 @@ type
     q: int # `q` describes the amount of queens.
 
 const
-  Block* = 999 ## \
+  Block* = 999                                         ## \
     ## `Block` is the value assigned to empty blocked fields in a board.
   WPawn* = 1
     ## `WPawn` is the value assigned to a square in a board with a white pawn.
-  WKnight* = 2 ## \
+  WKnight* = 2                                         ## \
     ## `WKnight` is the value assigned to a square in a board with a white
     ## knight.
-  WBishop* = 3 ## \
+  WBishop* = 3                                         ## \
     ## `WBishop` is the value assigned to a square in a board with a white
     ## bishop.
-  WRook* = 4 ## \
+  WRook* = 4                                           ## \
     ## `WRook` is the value assigned to a square in a board with a white rook.
-  WQueen* = 5 ## \
+  WQueen* = 5                                          ## \
     ## `WQueen` is the value assigned to a square in a board with a white
     ## queen.
-  WKing* = 6 ## \
+  WKing* = 6                                           ## \
     ## `WKing` is the value assigned to a square in a board with a white king.
-  WEnPassant* = 7 ## \
+  WEnPassant* = 7                                      ## \
     ## `WEnPassant` is assigned to a square in a board with an invisible white
     ## en passant pawn.
-  BPawn* = -WPawn ## \
+  BPawn* = -WPawn                                      ## \
     ## `BPawn` is the value assigned to a square in a board with a black pawn.
-  BKnight* = -WKnight ## \
+  BKnight* = -WKnight                                  ## \
     ## `BKnight` is the value assigned to a square in a board with a black\
     ## knight.
-  BBishop* = -WBishop ## \
+  BBishop* = -WBishop                                  ## \
     ## `BBishop` is the value assigned to a square in a board with a black\
     ## bishop.
-  BRook* = -WRook ## \
+  BRook* = -WRook                                      ## \
     ## `BRook` is the value assigned to a square in a board with a black rook.
-  BQueen* = -WQueen ## \
+  BQueen* = -WQueen                                    ## \
     ## `BQueen` is the value assigned to a square in a board with a black queen.
-  BKing* = -WKing ## \
+  BKing* = -WKing                                      ## \
     ## `BKing` is the value assigned to a square in a board with a black king.
-  BEnPassant* = -WEnPassant ## \
+  BEnPassant* = -WEnPassant                            ## \
     ## `BEnPassant` is assigned to a square in a board with an invisible black
     ## en passant pawn.
-  # Directions of squares from whites perspective.
-  N = 10 # move up
-  S = -N # Move down
-  W = 1 # Move left
-  E = -W # Move right
+  N = 10 ## `N` describes a move a field up the board from whites perspective.
+  S = -N ## `S` describes a move a field down the board from whites perspective.
+  W = 1 ## `W` describes a move a field to the left from whites perspective.
+  E = -W ## `E` describes a move a field to the right from whites perspective.
   # Directions for the pieces. Special moves are in separate arrays.
-  Knight_Moves = [N+N+E, N+N+W, E+E+N, E+E+S, S+S+E, S+S+W, W+W+N, W+W+S]
-  Bishop_Moves = [N+E, N+W, S+E, S+W]
-  Rook_Moves = [N, E, S, W]
-  Queen_Moves = [N, E, S, W, N+E, N+W, S+E, S+W]
-  King_Moves = [N, E, S, W, N+E, N+W, S+E, S+W]
-  King_Moves_White_Castle = [E+E, W+W]
-  Pawn_Moves_White = [N]
-  Pawn_Moves_White_Double = [N+N]
-  Pawn_Moves_White_Attack = [N+E, N+W]
-  # Material as PieceAmount where a forced checkmate is not possible.
-  InsufficientMaterial: array[4,PieceAmount] = [
-    (0, 0, 0, 0, 0), # only kings
-    (0, 0, 1, 0, 0), # knight only
-    (0, 1, 0, 0, 0), # bishop only
-    (0, 2, 0, 0, 0)  # 2 knights
-  ]
+  Knight_Moves = [N+N+E, N+N+W, E+E+N, E+E+S, S+S+E, S+S+W, W+W+N, W+W+S] ## \
+    ## `Knight_Moves` describes the possible knight moves.
+  Bishop_Moves = [N+E, N+W, S+E, S+W]                  ## \
+    ## `Bishop_Moves` describes the possible 1 field distance bishop moves.
+  Rook_Moves = [N, E, S, W]                            ## \
+    ## `Rook_Moves` describes the possible 1 field distance rook moves.
+  Queen_Moves = [N, E, S, W, N+E, N+W, S+E, S+W]       ## \
+    ## `Queen_Moves` describes the possible 1 field distance queen moves.
+  King_Moves = [N, E, S, W, N+E, N+W, S+E, S+W]        ## \
+    ## `King_Moves` describes the possible 1 field distance king moves.
+  King_Moves_White_Castle = [E+E, W+W]                 ## \
+    ## `King_Moves` describes the possible king moves for castling.
+  Pawn_Moves_White = [N]                               ## \
+    ## `Pawn_Moves_White` describes the possible 1 field distance pawn moves
+    ## from whites perspective that are not attacks.
+  Pawn_Moves_White_Double = [N+N]                      ## \
+    ## `Pawn_Moves_White_Double` describes the possible pawn 2 field distance
+    ## moves from whites perspective.
+  Pawn_Moves_White_Attack = [N+E, N+W]                 ## \
+    ## `Pawn_Moves_White` describes the possible 1 field distance pawn moves
+    ## from whites perspective that are ttacks.
+  InsufficientMaterial: array[4, PieceAmount] = [
+    (0, 0, 0, 0, 0),                                   # only kings
+    (0, 0, 1, 0, 0),                                   # knight only
+    (0, 1, 0, 0, 0),                                   # bishop only
+    (0, 2, 0, 0, 0)                                    # 2 knights
+  ] ## `InsufficientMaterial` describes the pieces where no checkmate can be
+                                                       ## forced.
 
 
 let
-  # Representation of the pieces by ID.
   PieceChar = {
     0: " ",
     WPawn: "P",
@@ -120,8 +129,8 @@ let
     BQueen: "q",
     BKing: "k",
     BEnPassant: " ",
-  }.newTable
-  # Files on the chess board mapped to according integers.
+  }.newTable ## \
+    ## `PieceChar` describes the representation for the pieceIDs for the cli.
   FileChar = {
     "a": 7,
     "b": 6,
@@ -131,10 +140,14 @@ let
     "f": 2,
     "g": 1,
     "h": 0
-  }.newTable
+  }.newTable ## \
+  # `FileChar` maps the files of the chessboard to numbers for better
+  # conversion.
 
 proc checkInsufficientMaterial(board: Board): bool =
-  ## Checks for combinations of pieces on a `board`, where no checkmate can be forced
+  ## Checks for combinations of pieces on a `board`, where no checkmate can be
+  ## forced.
+  ## Returns true if no player can force a checkmate to the other.
   var wp = 0
   var wn = 0
   var wb = 0
@@ -191,7 +204,8 @@ proc initBoard(): Board =
   return board
 
 proc initBoard(board: array[0..63, int]): Board =
-  ## Create and return a board with pieces in position of choice
+  ## Create and return a board with pieces in position of choice, described in
+  ## `board`.
   let board = [
     Block, Block, Block, Block, Block, Block, Block, Block, Block, Block,
     Block, Block, Block, Block, Block, Block, Block, Block, Block, Block,
@@ -229,6 +243,7 @@ proc initGame*(): Game =
 
 proc initGame*(board: array[0..63, int], color: Color): Game =
   ## Create ad return a Game object based on a position of choice.
+  ## `board` describes the pieces, `color` the color that is about to move.
   let board = initBoard(board)
   let compare = initBoard()
   var moved = initMoved()
@@ -242,19 +257,22 @@ proc initGame*(board: array[0..63, int], color: Color): Game =
   return game
 
 proc getMove*(start: int, dest: int, prom: int, color: Color): Move =
-  ## Get a move object from `start` to `dest` with an eventual promition to `prom`
+  ## Get a move object of the `color` player from `start` to `dest` with an
+  ## eventual promition to `prom`.
   var move = Move(start: start, dest: dest, prom: prom * ord(color), color: color)
   if (WKnight > prom or WQueen < prom):
     move.prom = WQueen
   return move
 
 proc getMove*(start: int, dest: int, color: Color): Move =
-  ## Get a move object from `start` to `dest` with automatic promition to `queen`
+  ## Get a move object of the `color` player from `start` to `dest` with
+  ## automatic promition to queen.
   var move = Move(start: start, dest: dest, prom: WQueen * ord(color), color: color)
   return move
 
 proc echoBoard*(game: Game, color: Color) =
-  ## Prints out the given `board` with its pieces as characters and line indices from perspecive of `color`.
+  ## Prints out the given `board` with its pieces as characters and line
+  ## indices from perspecive of `color`.
   var line_str = ""
   if (color == Color.Black):
     for i in countup(0, len(game.board)-1):
@@ -276,21 +294,23 @@ proc echoBoard*(game: Game, color: Color) =
     echo "a b c d e f g h"
 
 proc fieldToInd*(file: string, line: int): int =
-  ## Calculate board index from `file` and `line` of a chess board.
+  ## Calculate and return board index from `file` and `line` of a chess board.
+  ## Returns -1 if the `field` was not input correct.
   try:
     return 1+(line+1)*10+FileChar[file]
   except IndexDefect, ValueError:
     return -1
 
 proc fieldToInd*(field: string): int =
-  ## Calculate board index from `field` of a chess board.
+  ## Calculate and return board index from `field` of a chess board.
+  ## Returns -1 if the `field` was not input correct.
   try:
     return fieldToInd($field[0], parseInt($field[1]))
   except IndexDefect, ValueError:
     return -1
 
 proc indToField*(ind: int): string =
-  ## Calculate field name from board index `ind`.
+  ## Calculate and returns field name from board index `ind`.
   let line = (int)ind/10-1
   let file_ind = (ind)%%10-1
   for file, i in FileChar:
@@ -298,7 +318,7 @@ proc indToField*(ind: int): string =
       return $file & $line
 
 proc genCastleRights(moved: Moved): CastleRights =
-  ## Generate rights to castle from given `moved`
+  ## Generate and return rights to castle from given `moved`
   let wk = not moved[fieldToInd("e1")] and not moved[fieldToInd("h1")]
   let wq = not moved[fieldToInd("e1")] and not moved[fieldToInd("a1")]
   let bk = not moved[fieldToInd("e8")] and not moved[fieldToInd("h8")]
@@ -306,7 +326,8 @@ proc genCastleRights(moved: Moved): CastleRights =
   return (wk, wq, bk, bq)
 
 proc notationToMove*(notation: string, color: Color): Move =
-  ## Convert simplified algebraic chess `notation` to a move object, color of player is `color`.
+  ## Convert and return simplified algebraic chess `notation` to a move object,
+  ## color of player is `color`.
   var move: Move
   var start = fieldToInd(notation[0..1])
   var dest = fieldToInd(notation[2..3])
@@ -327,7 +348,8 @@ proc notationToMove*(notation: string, color: Color): Move =
   return move
 
 proc genBishopDests(game: Game, field: int, color: Color): seq[int] =
-  ## Generate possible destinations for a bishop with specific `color` located at index `field` of `game`.
+  ## Generate possible destinations for a bishop with specific `color` located
+  ## at index `field` of `game`.
   ## Returns a sequence of possible indices to move to.
   if (not field in game.board.low..game.board.high):
     return @[]
@@ -349,7 +371,8 @@ proc genBishopDests(game: Game, field: int, color: Color): seq[int] =
   return res
 
 proc genRookDests(game: Game, field: int, color: Color): seq[int] =
-  ## Generate possible destinations for a rook with specific `color` located at index `field` of `game`.
+  ## Generate possible destinations for a rook with specific `color` located at
+  ## index `field` of `game`.
   ## Returns a sequence of possible indices to move to.
   if (not field in game.board.low..game.board.high):
     return @[]
@@ -371,7 +394,8 @@ proc genRookDests(game: Game, field: int, color: Color): seq[int] =
   return res
 
 proc genQueenDests(game: Game, field: int, color: Color): seq[int] =
-  ## Generate possible destinations for a queen with specific `color` located at index `field` of `game`.
+  ## Generate possible destinations for a queen with specific `color` located
+  ## at index `field` of `game`.
   ## Returns a sequence of possible indices to move to.
   if (not field in game.board.low..game.board.high):
     return @[]
@@ -393,7 +417,8 @@ proc genQueenDests(game: Game, field: int, color: Color): seq[int] =
   return res
 
 proc genKingCastleDest(game: Game, field: int, color: Color): seq[int] =
-  ## Generate possible castle destinations for a king with specific `color` located at index `field` of `game`
+  ## Generate possible castle destinations for a king with specific `color`
+  ## located at index `field` of `game`
   ## Returns a sequence of possible indices to move to.
   if (not field in game.board.low..game.board.high):
     return @[]
@@ -416,9 +441,9 @@ proc genKingCastleDest(game: Game, field: int, color: Color): seq[int] =
     res.add(dest)
   return res
 
-
 proc genKingDests(game: Game, field: int, color: Color): seq[int] =
-  ## Generate possible destinations for a king with specific `color` located at index `field` of `game`.
+  ## Generate possible destinations for a king with specific `color`
+  ## located at index `field` of `game`.
   ## Returns a sequence of possible indices to move to.
   if (not field in game.board.low..game.board.high):
     return @[]
@@ -437,7 +462,8 @@ proc genKingDests(game: Game, field: int, color: Color): seq[int] =
   return res
 
 proc genKnightDests(game: Game, field: int, color: Color): seq[int] =
-  ## Generate possible destinations for a knight with specific `color` located at index `field` of `game`.
+  ## Generate possible destinations for a knight with specific `color` located
+  ## at index `field` of `game`.
   ## Returns a sequence of possible indices to move to.
   if (not field in game.board.low..game.board.high):
     return @[]
@@ -455,7 +481,8 @@ proc genKnightDests(game: Game, field: int, color: Color): seq[int] =
   return res
 
 proc genPawnAttackDests(game: Game, field: int, color: Color): seq[int] =
-  ## Generate possible attack destinations for a pawn with specific `color` located at index `field` of `game`.
+  ## Generate possible attack destinations for a pawn with specific `color`
+  ## located at index `field` of `game`.
   ## Returns a sequence of possible indices to move to.
   if (not field in game.board.low..game.board.high):
     return @[]
@@ -473,7 +500,8 @@ proc genPawnAttackDests(game: Game, field: int, color: Color): seq[int] =
   return res
 
 proc genPawnDoubleDests(game: Game, field: int, color: Color): seq[int] =
-  ## Generate possible double destinations for a pawn with specific `color` located at index `field` of `game`.
+  ## Generate possible double destinations for a pawn with specific `color`
+  ## located at index `field` of `game`.
   ## Returns a sequence of possible indices to move to.
   if (not field in game.board.low..game.board.high):
     return @[]
@@ -492,7 +520,8 @@ proc genPawnDoubleDests(game: Game, field: int, color: Color): seq[int] =
   return res
 
 proc genPawnDests(game: Game, field: int, color: Color): seq[int] =
-  ## Generate possible destinations for a pawn with specific `color` located at index `field` of `game`.
+  ## Generate possible destinations for a pawn with specific `color` located at
+  ## index `field` of `game`.
   ## Returns a sequence of possible indices to move to.
   if (not field in game.board.low..game.board.high):
     return @[]
@@ -513,14 +542,16 @@ proc genPawnDests(game: Game, field: int, color: Color): seq[int] =
 
 proc pieceOn(game: Game, color: Color, sequence: seq[int],
     pieceID: int): bool =
-  ## Check if a piece with `pieceID` of a given `color` is in a field described in a `sequence` in a `game`.
+  ## Returns true if the `PieceID` of a given `color` is in `sequence` else
+  ## wrong.
   for check in sequence:
     if game.board[check] == ord(color) * -1 * pieceID:
       return true
   return false
 
 proc isAttacked(game: Game, position: int, color: Color): bool =
-  ## Check if a field is attacked by the opposite of `color` in a `game`.
+  ## Returns true if a `position` in a `game` is attacked by the opposite
+  ## color of `color`.
   var attacked = false
   attacked = attacked or game.pieceOn(color, game.genPawnAttackDests(
       position, color), WPawn)
@@ -537,7 +568,7 @@ proc isAttacked(game: Game, position: int, color: Color): bool =
   return attacked
 
 proc isInCheck*(game: Game, color: Color): bool =
-  ## Check if the King of a given `color` is in check in a `game`.
+  ## Returns true if the king of a given `color` is in check in a `game`.
   var king_pos: int
   for i in countup(0, game.board.high):
     if game.board[i] == ord(color) * WKing:
@@ -545,9 +576,8 @@ proc isInCheck*(game: Game, color: Color): bool =
   return game.isAttacked(king_pos, color)
 
 proc uncheckedMove(game: var Game, start: int, dest: int): bool {.discardable.} =
-  ## Moves a piece if possible from `start` position to `dest` position.
-  ## Doesnt check boundaries, checks, movement.
-  ## returns true if the piece moved, else false
+  ## Moves a piece if possible from `start` position to `dest` position in a
+  ## `game`.
   let piece = game.board[start]
   game.board[start] = 0
   game.board[dest] = piece
@@ -557,19 +587,21 @@ proc uncheckedMove(game: var Game, start: int, dest: int): bool {.discardable.} 
 
 proc moveLeadsToCheck(game: Game, start: int, dest: int,
     color: Color): bool =
-  ## Checks in a `game` if a move from `start` to `dest` puts the `color` king in check.
+  ## Returns true if a move from `start` to `dest` in a `game` puts the `color`
+  ## king in check.
   var check = game
   check.uncheckedMove(start, dest)
   return check.isInCheck(color)
 
 proc removeEnPassant(board: var Board, color: Color): void =
-  ## Removes every en passant of given `color` from the `game`.
+  ## Removes every en passant of given `color` from the `board`.
   for field in board.low..board.high:
     if board[field] == ord(color) * WEnPassant:
       board[field] = 0
 
 proc genLegalKnightMoves(game: Game, field: int, color: Color): seq[Move] =
-  ## Generates all legal knight moves starting from `field` in a `game` for a `color`.
+  ## Generates all legal knight moves in a `game` starting from `field` for a
+  ## `color`.
   if game.board[field] != WKnight * ord(color):
     return @[]
   var res = newSeq[Move]()
@@ -580,7 +612,8 @@ proc genLegalKnightMoves(game: Game, field: int, color: Color): seq[Move] =
   return res
 
 proc genLegalBishopMoves(game: Game, field: int, color: Color): seq[Move] =
-  ## Generates all legal bishop moves starting from `field` in a `game` for a `color`.
+  ## Generates all legal bishop moves in a `game` starting from `field` for a
+  ## `color`.
   if game.board[field] != WBishop * ord(color):
     return @[]
   var res = newSeq[Move]()
@@ -591,7 +624,8 @@ proc genLegalBishopMoves(game: Game, field: int, color: Color): seq[Move] =
   return res
 
 proc genLegalRookMoves(game: Game, field: int, color: Color): seq[Move] =
-  ## Generates all legal rook moves starting from `field` in a `game` for a `color`.
+  ## Generates all legal rook moves in a `game` starting from `field` for a
+  ## `color`.
   if game.board[field] != WRook * ord(color):
     return @[]
   var res = newSeq[Move]()
@@ -602,7 +636,8 @@ proc genLegalRookMoves(game: Game, field: int, color: Color): seq[Move] =
   return res
 
 proc genLegalQueenMoves(game: Game, field: int, color: Color): seq[Move] =
-  ## Generates all legal queen moves starting from `field` in a `game` for a `color`.
+  ## Generates all legal queen moves in a `game` starting from `field` for a
+  ## `color`.
   if game.board[field] != WQueen * ord(color):
     return @[]
   var res = newSeq[Move]()
@@ -613,7 +648,8 @@ proc genLegalQueenMoves(game: Game, field: int, color: Color): seq[Move] =
   return res
 
 proc genLegalKingMoves(game: Game, field: int, color: Color): seq[Move] =
-  ## Generates all legal king moves starting from `field` in a `game` for a `color`.
+  ## Generates all legal king moves in a `game` starting from `field` for a
+  ## `color`.
   if game.board[field] != WKing * ord(color):
     return @[]
   var res = newSeq[Move]()
@@ -638,7 +674,8 @@ proc genPawnPromotion(move: Move, color: Color): seq[Move] =
   return promotions
 
 proc genLegalPawnMoves(game: Game, field: int, color: Color): seq[Move] =
-  ## Generates all legal pawn moves starting from `field` in a `game` for a `color`.
+  ## Generates all legal pawn moves in a `game` starting from `field` for a
+  ## `color`.
   if game.board[field] != WPawn * ord(color):
     return @[]
   var res = newSeq[Move]()
@@ -653,7 +690,7 @@ proc genLegalPawnMoves(game: Game, field: int, color: Color): seq[Move] =
   return res
 
 proc genLegalMoves*(game: Game, field: int, color: Color): seq[Move] =
-  ## Generates all legal moves starting from `field` in a `game` for a `color`.
+  ## Generates all legal moves in a `game` starting from `field` for a `color`.
   var legal_moves = newSeq[Move]()
   var target = ord(color) * game.board[field]
   if 0 < target and target < WEnPassant:
@@ -683,9 +720,11 @@ proc genLegalMoves*(game: Game, color: Color): seq[Move] =
 
 proc castling(game: var Game, kstart: int, dest_kingside: bool,
     color: Color): bool {.discardable.} =
-  ## Tries to castle in a given `game` with the king of a given `color` from `start`.
+  ## Tries to castle in a given `game` with the king of a given `color` from
+  ## `kstart`.
   ## `dest_kingside` for kingside castling, else castling is queenside.
-  ## This process checks for the legality of the move and performs the switch of `game.to_move`
+  ## This process checks for the legality of the move and performs the switch
+  ## of `game.to_move`
   if game.toMove != color:
     return false
   var kdest = kstart
@@ -717,12 +756,10 @@ proc castling(game: var Game, kstart: int, dest_kingside: bool,
     return true
   return false
 
-proc getPrevBoard*(game: Game): seq[Board] =
-  return game.previousBoard
-
 proc checkedMove*(game: var Game, move: Move): bool {.discardable.} =
-  ## Tries to make a move in a given `game` with the piece of a given `color` from `start` to `dest`.
-  ## This process checks for the legality of the move and performs the switch of `game.to_move`
+  ## Tries to make a `move` in a given `game``.
+  ## This process checks for the legality of the move and performs the switch
+  ## of `game.to_move` with exception of castling (castling() switches).
   let start = move.start
   let dest = move.dest
   let color = move.color
@@ -769,15 +806,16 @@ proc checkedMove*(game: var Game, move: Move): bool {.discardable.} =
     return true
 
 proc hasNoMoves(game: Game, color: Color): bool =
-  ## Checks if a player of a given `color` has no legal moves in a `game`.
+  ## Returns true if the `color` player has no legal moves in a `game`.
   return (game.genLegalMoves(color) == @[])
 
 proc isCheckmate*(game: Game, color: Color): bool =
-  ## Checks if a player of a given `color` in a `game` is checkmate.
+  ## Returns true if the `color` player is checkmate in a `game`.
   return game.hasNoMoves(color) and game.isInCheck(color)
 
 proc threeMoveRep(game: Game): bool =
-  ## Checks if a `rep`-times repitition happened on the last move of the `game`.
+  ## Returns true if a 3-fold repitition happened on the last move of the
+  ## `game`.
   var lastState = game.previousBoard[game.previousBoard.high]
   var lastCastleRights = game.previousCastleRights[game.previousBoard.high]
   var reps = 0
@@ -788,14 +826,14 @@ proc threeMoveRep(game: Game): bool =
   return reps >= 3
 
 proc fiftyMoveRule(game: Game): bool =
-  ## Checks if a draw with the fifty move rule is available in a `game`.
+  ## Returns true if a draw can be claimed by the 50 move rule in a `game`.
   return game.fiftyMoveCounter >= 100
 
 proc isDrawClaimable*(game: Game): bool =
-  ## Checks if a draw is claimable by either player.
+  ## Returns true if a draw is claimable by either player.
   return game.threeMoveRep() or game.fiftyMoveRule()
 
 proc isStalemate*(game: Game, color: Color): bool =
-  ## Checks if a player of a given `color` in a `game` is stalemate.
+  ## Returns true if the `color` player is stalemate in a `game`.
   return (game.hasNoMoves(color) and not game.isInCheck(color)) or
       game.board.checkInsufficientMaterial()

@@ -3,7 +3,8 @@ import rdstdin
 
 import ./chess
 
-proc runGame(): void =
+proc runGame*(): void =
+  ## Initializes and runs a game of chess.
   var game = initGame()
   var draw: string
   game.echoBoard(game.toMove)

@@ -22,3 +22,8 @@ You can simply run the tests with `nim c -r test.nim`.
 Documentation is written into the code via DocGen.
 For this reason it is not saved in this repository.
 To extract it into html run `nim doc --project --index:on --outdir:htmldocs game.nim`
+
+### Board Representation
+
+Due to easier off the board checking a
+[10x12](https://www.chessprogramming.org/10x12_Board) board is used.

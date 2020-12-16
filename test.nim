@@ -1588,5 +1588,22 @@ testSuite GameTest of TestSuite:
         else:
           self.check(not test)
 
+  method testcheckedMoveFaultyInput() =
+    var test: bool
+    self.setup()
+    let startPos = self.game
+    test = self.game.checkedMove(notationToMove("aaaa", Color.White))
+    self.check(not test)
+    test = (self.game == startPos)
+    self.check(test)
+    test = self.game.checkedMove(notationToMove("1bb6&111", Color.White))
+    self.check(not test)
+    test = (self.game == startPos)
+    self.check(test)
+    test = self.game.checkedMove(notationToMove("e1g1sdfa", Color.White))
+    self.check(not test)
+    test = (self.game == startPos)
+    self.check(test)
+
 when isMainModule:
   einheit.runTests()

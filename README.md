@@ -1,9 +1,10 @@
 # ychess
 
+Attention: **The Chess engine is not finished yet.**
+
 ![ychess-logo](ychess.png)
 
-ychess is a chess implementation written in nim.
-A chess engine is planned.
+ychess is a chess implementation and engine written in nim.
 
 ## Usage
 

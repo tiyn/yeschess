@@ -1,6 +1,3 @@
-from strutils import parseInt
-import rdstdin
-
 import ./chess
 
 proc runGame*(): void =

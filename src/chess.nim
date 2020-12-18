@@ -8,8 +8,6 @@ type
     White = 1
   Board* = array[0..119, int] ## \
     ## `Board` saves the position of the chess pieces.
-  Moved* = array[0..119, bool] ## \
-    ## `Moved` saves the position of squares a piece moved on or from.
   CastleRights = tuple
     ## `CastleRights` contains the rights to castling for each player.
     wk: bool # `wk` describes White kingside castle
@@ -19,11 +17,11 @@ type
   Game* = object
     ## `Game` stores all important information of a chess game.
     board*: Board
-    moved: Moved
     toMove*: Color
     previousBoard: seq[Board]
     previousCastleRights: seq[CastleRights]
     fiftyMoveCounter: int
+    castleRights: CastleRights
   Move* = object
     ## `Move` stores all important information for a move.
     start: int
@@ -246,16 +244,11 @@ proc initBoard(board: array[0..63, int]): Board =
     Block, Block, Block, Block, Block, Block, Block, Block, Block, Block]
   return board
 
-proc initMoved(): Moved =
-  ## Create and return a board of pieces moved.
-  var moved: Moved
-  return moved
-
 proc initGame*(): Game =
   ## Create and return a Game object.
-  let game = Game(board: initBoard(), moved: initMoved(),
+  let game = Game(board: initBoard(),
       to_move: Color.White, previousBoard: @[], previousCastleRights: @[],
-          fiftyMoveCounter: 0)
+          fiftyMoveCounter: 0, castleRights: (true, true, true, true))
   return game
 
 proc initGame*(board: array[0..63, int], color: Color): Game =
@@ -263,14 +256,26 @@ proc initGame*(board: array[0..63, int], color: Color): Game =
   ## `board` describes the pieces, `color` the color that is about to move.
   let board = initBoard(board)
   let compare = initBoard()
-  var moved = initMoved()
   var same_piece: bool
+  var wk = false
+  var wq = false
+  var bk = false
+  var bq = false
+  if (board[fieldToInd("e1")] == compare[fieldToInd("e1")]):
+    if (board[fieldToInd("a1")] == compare[fieldToInd("a1")]):
+      wq = true
+    if (board[fieldToInd("h1")] == compare[fieldToInd("h1")]):
+      wk = true
+  if (board[fieldToInd("e8")] == compare[fieldToInd("e8")]):
+    if (board[fieldToInd("a8")] == compare[fieldToInd("a8")]):
+      bq = true
+    if (board[fieldToInd("h8")] == compare[fieldToInd("h8")]):
+      bk = true
   for ind in board.low..board.high:
     same_piece = (board[ind] != compare[ind])
-    moved[ind] = same_piece
-  let game = Game(board: board, moved: moved,
+  let game = Game(board: board,
       to_move: color, previousBoard: @[], previousCastleRights: @[],
-          fiftyMoveCounter: 0)
+          fiftyMoveCounter: 0, castleRights: (wk, wq, bk, bq))
   return game
 
 proc echoBoard*(game: Game, color: Color) =
@@ -295,14 +300,6 @@ proc echoBoard*(game: Game, color: Color) =
         line_str &= $((int)((i)/10)-1) & "\n"
     echo line_str
     echo "a b c d e f g h"
-
-proc genCastleRights(moved: Moved): CastleRights =
-  ## Generate and return rights to castle from given `moved`
-  let wk = not moved[fieldToInd("e1")] and not moved[fieldToInd("h1")]
-  let wq = not moved[fieldToInd("e1")] and not moved[fieldToInd("a1")]
-  let bk = not moved[fieldToInd("e8")] and not moved[fieldToInd("h8")]
-  let bq = not moved[fieldToInd("e8")] and not moved[fieldToInd("a8")]
-  return (wk, wq, bk, bq)
 
 proc genPawnAttackDests(game: Game, field: int, color: Color): seq[int] =
   ## Generate possible attack destinations for a pawn with specific `color`
@@ -337,8 +334,12 @@ proc genPawnDoubleDests(game: Game, field: int, color: Color): seq[int] =
     if (not dest in game.board.low..game.board.high):
       continue
     target = game.board[dest]
-    if (game.moved[field] or (target != 0) or (
+    if ((target != 0) or (
         game.board[dest+(S*ord(color))] != 0)):
+      continue
+    if (color == Color.White and not (field in fieldToInd("h2")..fieldToInd("a2"))):
+      continue
+    if (color == Color.Black and not (field in fieldToInd("h7")..fieldToInd("a7"))):
       continue
     res.add(dest)
   return res
@@ -538,8 +539,22 @@ proc uncheckedMove(game: var Game, start: int, dest: int): bool {.discardable.} 
   let piece = game.board[start]
   game.board[start] = 0
   game.board[dest] = piece
-  game.moved[start] = true
-  game.moved[dest] = true
+  if (start == fieldToInd("e1") or start == fieldToInd("a1")):
+    game.castleRights.wq = false
+  if (start == fieldToInd("e1") or start == fieldToInd("h1")):
+    game.castleRights.wk = false
+  if (start == fieldToInd("e8") or start == fieldToInd("a8")):
+    game.castleRights.bq = false
+  if (start == fieldToInd("e8") or start == fieldToInd("h8")):
+    game.castleRights.bk = false
+  if (dest == fieldToInd("e1") or dest == fieldToInd("a1")):
+    game.castleRights.wq = false
+  if (dest == fieldToInd("e1") or dest == fieldToInd("h1")):
+    game.castleRights.wk = false
+  if (dest == fieldToInd("e8") or dest == fieldToInd("a8")):
+    game.castleRights.bq = false
+  if (dest == fieldToInd("e8") or dest == fieldToInd("h8")):
+    game.castleRights.bk = false
   return true
 
 proc moveLeadsToCheck(game: Game, start: int, dest: int,
@@ -681,15 +696,24 @@ proc castling(game: var Game, kstart: int, dest_kingside: bool,
   var kdest = kstart
   var rstart: int
   var rdest: int
+  var rights = false
   if (dest_kingside):
     kdest = kstart + (E+E)
     rstart = kstart + (E+E+E)
     rdest = rstart + (W+W)
+    if (color == Color.White):
+      rights = game.castleRights.wk
+    else:
+      rights = game.castleRights.bk
   else:
     rstart = kstart + (W+W+W+W)
     rdest = rstart + (E+E+E)
     kdest = kstart + (W+W)
-  if not game.moved[kstart] and not game.moved[rstart]:
+    if (color == Color.White):
+      rights = game.castleRights.bq
+    else:
+      rights = game.castleRights.bq
+  if (rights):
     var check = false
     if (dest_kingside):
       check = check or game.isAttacked(kstart, color)
@@ -756,7 +780,7 @@ proc checkedMove*(game: var Game, move: Move): bool {.discardable.} =
     var prevBoard = game.previousBoard
     var prevCastle = game.previousCastleRights
     game.previousBoard.add(game.board)
-    game.previousCastleRights.add(game.moved.genCastleRights())
+    game.previousCastleRights.add(game.castleRights)
     game.fiftyMoveCounter = game.fiftyMoveCounter + 1
     if fiftyMoveRuleReset:
       game.fiftyMoveCounter = 0

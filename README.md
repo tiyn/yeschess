@@ -28,3 +28,8 @@ To extract it into html run `nim doc --project --index:on --outdir:htmldocs game
 
 Due to easier off the board checking a
 [10x12](https://www.chessprogramming.org/10x12_Board) board is used.
+
+### Engine
+
+The engine uses a simple implementation of the
+[Minimax](https://www.chessprogramming.org/Minimax)-algorithm.

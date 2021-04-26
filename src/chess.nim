@@ -24,8 +24,8 @@ type
     castleRights: CastleRights
   Move* = object
     ## `Move` stores all important information for a move.
-    start: int
-    dest: int
+    start*: int
+    dest*: int
     color: Color
     prom: int
   PieceAmount = tuple
@@ -136,7 +136,7 @@ let
     "e": 3,
     "f": 2,
     "g": 1,
-    "h": 0
+    "h": 0,
   }.newTable ## \
   # `FileChar` maps the files of the chessboard to numbers for better
   # conversion.

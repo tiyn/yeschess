@@ -107,7 +107,7 @@ const
     (0, 1, 0, 0, 0),                                   # bishop only
     (0, 2, 0, 0, 0)                                    # 2 knights
   ] ## `InsufficientMaterial` describes the pieces where no checkmate can be
-    ## forced
+                                                       ## forced
 
 let
   PieceChar = {
@@ -252,7 +252,7 @@ proc initGame*(): Game =
   return game
 
 proc initGame*(board: array[0..63, int], color: Color): Game =
-  ## Create ad return a Game object based on a position of choice.
+  ## Create and return a Game object based on a position of choice.
   ## `board` describes the pieces, `color` the color that is about to move.
   let board = initBoard(board)
   let compare = initBoard()
@@ -831,25 +831,25 @@ proc checkInsufficientMaterial(board: Board): bool =
   for field in board.low..board.high:
     case board[field]:
       of WPawn:
-        wp = wp + 1
+        wp += 1
       of BPawn:
-        bp = bp + 1
+        bp += 1
       of WKnight:
-        wn = wn + 1
+        wn += 1
       of BKnight:
-        bn = bn + 1
+        bn += 1
       of WBishop:
-        wb = wb + 1
+        wb += 1
       of BBishop:
-        bb = bb + 1
+        bb += 1
       of WRook:
-        wr = wr + 1
+        wr += 1
       of BRook:
-        br = br + 1
+        br += 1
       of WQueen:
-        wq = wq + 1
+        wq += 1
       of BQueen:
-        bq = bq + 1
+        bq += 1
       else:
         continue
   let wpieces: PieceAmount = (wp, wn, wb, wr, wq)

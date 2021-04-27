@@ -8,8 +8,8 @@ ychess is a chess implementation and engine written in nim.
 
 ## Usage
 
-Simply download the code and run `nim c -r game.nim`.
-You can now play a 1v1 hotseat game of chess in the commandline.
+To play chess in the commandline simply download the code and run `nim c -r game.nim`.
+You can either play the 1v1 hotseat mode or a single player mode vs the engine.
 
 ## Testing
 

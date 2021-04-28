@@ -1,4 +1,3 @@
-import sequtils
 import ./chess
 
 type

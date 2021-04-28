@@ -11,6 +11,12 @@ ychess is a chess implementation and engine written in nim.
 To play chess in the commandline simply download the code and run `nim c -r game.nim`.
 You can either play the 1v1 hotseat mode or a single player mode vs the engine.
 
+### Lichess
+
+ychess uses the lichess api with the python plugin [berserk](https://github.com/rhgrant10/berserk).
+An instance of the engine occasionally plays on [lichess](https://lichess.org/@/tiyn-ychess).
+To get into the whitelist just write a ingame message to the account.
+
 ## Testing
 
 Testing is done by `einheit` by [jyapayne](https://github.com/jyapayne/einheit).

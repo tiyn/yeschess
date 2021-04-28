@@ -201,6 +201,19 @@ proc notationToMove*(notation: string, color: Color): Move =
     move = getMove(start, dest, prom, color)
   return move
 
+proc moveToNotation*(move: Move): string =
+  ## Convert and return a `move` object to simplified algebraic chess notation.
+  var res = ""
+  var start = indToField(move.start)
+  res.add(start)
+  var dest = indToField(move.dest)
+  res.add(dest)
+  var color = move.color
+  var prom = PieceChar[move.prom]
+  if (color == Color.White and dest[1] == '8') or (color == Color.Black and dest[1] == '1'):
+    res.add(prom)
+  return res
+
 proc initBoard(): Board =
   ## Create and return a board with pieces in starting position.
   let board = [

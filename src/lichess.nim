@@ -11,7 +11,7 @@ var session = berserk.TokenSession(secret.api_token)
 var client = berserk.Client(session=session)
 
 let engineID = "tiyn-ychess"
-let engineDifficulty = 5
+let engineDifficulty = 3
 let toAccept = ["tiynger"]
 
 
@@ -27,22 +27,16 @@ proc playGame(id: string) {.async.} =
         echo("gameFull received")
         movesString = event["state"]["moves"]
         if $event["white"]["id"] == engineID:
-          echo("white assigned")
           color = Color.White
         if $event["black"]["id"] == engineID:
-          echo("black assigned")
           color = Color.Black
       else:
         echo("gameState received")
         movesString = event["moves"]
-        echo("movesString",movesString)
       if $movesString != "":
-        echo("movestring not empty")
         var moves = movesString.split(" ")
         game.checkedMove(notationToMove($moves[-1], game.toMove))
         game.echoBoard(game.toMove)
-      echo("toMove", game.toMove)
-      echo("color", color)
       if game.toMove == color:
         echo("engine has to make a move")
         var bestMove = moveToNotation(game.bestMove(engineDifficulty))

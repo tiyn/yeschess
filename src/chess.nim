@@ -810,6 +810,8 @@ proc isCheckmate*(game: Game, color: Color): bool =
 proc threeMoveRep(game: Game): bool =
   ## Returns true if a 3-fold repitition happened on the last move of the
   ## `game`.
+  if game.previousBoard == []:
+    return false
   var lastState = game.previousBoard[game.previousBoard.high]
   var lastCastleRights = game.previousCastleRights[game.previousBoard.high]
   var reps = 0

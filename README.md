@@ -38,4 +38,4 @@ Due to easier off the board checking a
 ### Engine
 
 The engine uses a simple implementation of the
-[Minimax](https://www.chessprogramming.org/Minimax)-algorithm.
+[NegaMax](https://www.chessprogramming.org/NegaMax)-algorithm.

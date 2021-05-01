@@ -77,8 +77,8 @@ const
     ## en passant pawn.
   N = 10 ## `N` describes a move a field up the board from whites perspective.
   S = -N ## `S` describes a move a field down the board from whites perspective.
-  W = 1 ## `W` describes a move a field to the left from whites perspective.
-  E = -W ## `E` describes a move a field to the right from whites perspective.
+  E = 1 ## `E` describes a move a field to the right from whites perspective.
+  W = -E ## `W` describes a move a field to the left from whites perspective.
   # Directions for the pieces. Special moves are in separate arrays.
   Knight_Moves = [N+N+E, N+N+W, E+E+N, E+E+S, S+S+E, S+S+W, W+W+N, W+W+S] ## \
     ## `Knight_Moves` describes the possible knight moves.
@@ -129,14 +129,14 @@ let
   }.newTable ## \
     ## `PieceChar` describes the representation for the pieceIDs for the cli.
   FileChar = {
-    "a": 7,
-    "b": 6,
-    "c": 5,
-    "d": 4,
-    "e": 3,
-    "f": 2,
-    "g": 1,
-    "h": 0,
+    "a": 0,
+    "b": 1,
+    "c": 2,
+    "d": 3,
+    "e": 4,
+    "f": 5,
+    "g": 6,
+    "h": 7,
   }.newTable ## \
   # `FileChar` maps the files of the chessboard to numbers for better
   # conversion.
@@ -145,7 +145,7 @@ proc fieldToInd*(file: string, line: int): int =
   ## Calculate and return board index from `file` and `line` of a chess board.
   ## Returns -1 if the `field` was not input correct.
   try:
-    return 1+(line+1)*10+FileChar[file]
+    return 1+(line+1)*10+(7-FileChar[file])
   except IndexDefect, ValueError:
     return -1
 
@@ -160,7 +160,7 @@ proc fieldToInd*(field: string): int =
 proc indToField*(ind: int): string =
   ## Calculate and returns field name from board index `ind`.
   let line = (int)ind/10-1
-  let file_ind = (ind)%%10-1
+  let file_ind = 7-((ind)%%10-1)
   for file, i in FileChar:
     if FileChar[file] == file_ind:
       return $file & $line

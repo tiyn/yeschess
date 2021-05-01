@@ -11,14 +11,14 @@ var session = berserk.TokenSession(secret.api_token)
 var client = berserk.Client(session=session)
 
 let engineID = "tiyn-ychess"
-let engineDifficulty = 3
+let engineDifficulty = 2
 let toAccept = ["tiynger"]
 
 
-proc playGame(id: string) {.async.} =
+proc playLichessGame(id: string) {.async.} =
   ## Plays a lichess game with `id` asynchronously.
   var color: Color
-  var game = initGame()
+  var chess = initChess()
   for event in client.bots.stream_game_state(id):
     echo(event)
     if $event["type"] in ["gameState", "gameFull"]:
@@ -35,11 +35,11 @@ proc playGame(id: string) {.async.} =
         movesString = event["moves"]
       if $movesString != "":
         var moves = movesString.split(" ")
-        game.checkedMove(notationToMove($moves[-1], game.toMove))
-        game.echoBoard(game.toMove)
-      if game.toMove == color:
+        chess.checkedMove(notationToMove($moves[-1], chess.toMove))
+        chess.echoBoard(chess.toMove)
+      if chess.toMove == color:
         echo("engine has to make a move")
-        var bestMove = moveToNotation(game.bestMove(engineDifficulty))
+        var bestMove = moveToNotation(chess.bestMove(engineDifficulty))
         echo(bestMove)
         discard client.bots.make_move(id, bestMove)
 
@@ -56,10 +56,11 @@ proc acceptChallenge(whiteList: openArray[string]): void =
       if challenger in whiteList and speed == "correspondence":
         echo("challenge of ", challenger, " whiteList: ", id)
         discard client.bots.accept_challenge(id)
-        discard playGame($event["challenge"]["id"])
+        discard playLichessGame($event["challenge"]["id"])
       else:
         discard client.bots.decline_challenge(id)
         echo("challenge of ", challenger, " whiteList: ", id)
 
 
-acceptChallenge(toAccept)
+when isMainModule:
+  acceptChallenge(toAccept)

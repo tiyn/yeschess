@@ -1,18 +1,18 @@
 import einheit
 
-import ./chess
-import ./engine
+import ./chess.nim
+import ./engine.nim
 
-testSuite GameTest of TestSuite:
+testSuite ChessTest of TestSuite:
 
   var
-    game: Game
+    chess: Chess
 
   method setup() =
-    self.game = initGame()
+    self.chess = initChess()
 
   method testPieceEvalStalemate() =
-    self.game = initGame([
+    self.chess = initChess([
       0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, WKing, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0,
@@ -22,11 +22,11 @@ testSuite GameTest of TestSuite:
       0, 0, 0, 0, 0, BKing, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0
     ], Color.Black)
-    var pieceEvaluation = self.game.pieceEval()
+    var pieceEvaluation = self.chess.pieceEval()
     self.check(pieceEvaluation == 0)
 
   method testSpanMoveTree() =
-    self.game = initGame([
+    self.chess = initChess([
       0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, WKing, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0,
@@ -36,11 +36,11 @@ testSuite GameTest of TestSuite:
       0, 0, 0, 0, 0, BKing, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0
     ], Color.Black)
-    var mTree = self.game.spanMoveTree(1)
+    var mTree = self.chess.spanMoveTree(1)
     self.check(mTree.children == [])
 
   method testBestMoveProm() =
-    self.game = initGame([
+    self.chess = initChess([
       0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, WKing, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0,
@@ -50,7 +50,7 @@ testSuite GameTest of TestSuite:
       0, 0, 0, WPawn, 0, BKing, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0
     ], Color.White)
-    var testBestMove = self.game.bestMove(2)
+    var testBestMove = self.chess.bestMove(2)
     self.check(testBestMove.start != 0)
     self.check(indToField(testBestMove.start) == "e7")
     self.check(indToField(testBestMove.dest) == "e8")
@@ -58,7 +58,7 @@ testSuite GameTest of TestSuite:
 
 
   method testBestMoveStopProm() =
-    self.game = initGame([
+    self.chess = initChess([
       0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, WKing, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0,
@@ -68,13 +68,13 @@ testSuite GameTest of TestSuite:
       0, 0, 0, 0, WPawn, BKing, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0
     ], Color.Black)
-    var testBestMove = self.game.bestMove(2)
+    var testBestMove = self.chess.bestMove(2)
     self.check(testBestMove.start != 0)
     self.check(indToField(testBestMove.start) == "c7")
     self.check(indToField(testBestMove.dest) == "d7")
 
   method testBestMoveTacticBlack() =
-    self.game = initGame([
+    self.chess = initChess([
       0, 0, 0, 0, 0, 0, 0, 0,
       0, WRook, 0, WKing, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0,
@@ -84,12 +84,12 @@ testSuite GameTest of TestSuite:
       0, BRook, 0, 0, 0, BKing, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0
     ], Color.Black)
-    var testBestMove = self.game.bestMove(2)
+    var testBestMove = self.chess.bestMove(2)
     self.check(testBestMove.start != 0)
     self.check(indToField(testBestMove.start) != "g5" or indToField(testBestMove.dest) != "f4")
 
   method testBestMoveTacticWhite() =
-    self.game = initGame([
+    self.chess = initChess([
       0, 0, 0, 0, 0, 0, 0, 0,
       0, WRook, 0, WKing, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0,
@@ -99,7 +99,7 @@ testSuite GameTest of TestSuite:
       0, BRook, 0, 0, 0, BKing, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0
     ], Color.White)
-    var testBestMove = self.game.bestMove(2)
+    var testBestMove = self.chess.bestMove(2)
     self.check(testBestMove.start != 0)
     self.check(indToField(testBestMove.start) != "g4" or indToField(testBestMove.dest) != "f5")
 

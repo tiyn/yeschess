@@ -5,52 +5,53 @@ import ./engine.nim
 
 proc runGameHotseat*(): void =
   ## Initializes and runs a game of chess as hotseat.
-  var game = initGame()
+  var chess = initChess()
   var draw: string
-  game.echoBoard(game.toMove)
-  while not game.isCheckmate(game.toMove) and not game.isStalemate(game.toMove):
+  chess.echoBoard(chess.toMove)
+  while not chess.isCheckmate(chess.toMove) and not chess.isStalemate(chess.toMove):
     echo "Make a move"
-    echo game.toMove
+    echo chess.toMove
     var move = readLine(stdin)
-    while not game.checkedMove(notationToMove(move, game.toMove)):
+    while not chess.checkedMove(notationToMove(move, chess.toMove)):
       move = readLine(stdin)
-    game.echoBoard(game.toMove)
-    if (game.isDrawClaimable):
+    chess.echoBoard(chess.toMove)
+    if (chess.isDrawClaimable):
       echo "Do you want to claim a draw? (y/N)"
       draw = readLine(stdin)
       if (draw == "y"):
         echo "Draw claimed"
         break
-  if game.isCheckmate(game.toMove):
-    echo $game.toMove & " was checkmated"
-  if game.isStalemate(game.toMove):
+  if chess.isCheckmate(chess.toMove):
+    echo $chess.toMove & " was checkmated"
+  if chess.isStalemate(chess.toMove):
     echo "Stalemate"
 
 proc runGameSolo*(color: Color, difficulty: int): void =
   ## Initializes and runs a solo game of chess.
   ## The player plays as `color`.
-  var game = initGame()
+  echo("run game")
+  var chess = initChess()
   var draw: string
-  while not game.isCheckmate(game.toMove) and not game.isStalemate(game.toMove):
-    if (game.toMove == color):
-      game.echoBoard(color)
+  while not chess.isCheckmate(chess.toMove) and not chess.isStalemate(chess.toMove):
+    if (chess.toMove == color):
+      chess.echoBoard(color)
       echo "Make a move"
       var hMove = readLine(stdin)
-      while not game.checkedMove(notationToMove(hMove, game.toMove)):
+      while not chess.checkedMove(notationToMove(hMove, chess.toMove)):
         hMove = readLine(stdin)
-      game.echoBoard(color)
-      if (game.isDrawClaimable):
+      chess.echoBoard(color)
+      if (chess.isDrawClaimable):
         echo "Do you want to claim a draw? (y/N)"
         draw = readLine(stdin)
         if (draw == "y"):
           echo "Draw claimed"
           break
     else:
-      var cMove = bestMove(game, 3)
-      game.checkedMove(cMove)
-  if game.isCheckmate(game.toMove):
-    echo $game.toMove & " was checkmated"
-  if game.isStalemate(game.toMove):
+      var cMove = bestMove(chess, difficulty)
+      chess.checkedMove(cMove)
+  if chess.isCheckmate(chess.toMove):
+    echo $chess.toMove & " was checkmated"
+  if chess.isStalemate(chess.toMove):
     echo "Stalemate"
 
 proc menu(): void =
@@ -88,4 +89,5 @@ proc menu(): void =
     echo("\n\n\n")
     runGameHotseat()
 
-menu()
+when isMainModule:
+  menu()

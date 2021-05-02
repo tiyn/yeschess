@@ -1,7 +1,7 @@
 import einheit
 
-import ./chess.nim
-import ./engine.nim
+include ./chess.nim
+include ./engine.nim
 
 testSuite ChessTest of TestSuite:
 

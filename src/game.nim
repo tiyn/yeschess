@@ -15,7 +15,7 @@ proc runGameHotseat*(): void =
     while not chess.checkedMove(notationToMove(move, chess.toMove)):
       move = readLine(stdin)
     chess.echoBoard(chess.toMove)
-    if (chess.isDrawClaimable):
+    if (chess.isDrawClaimable()):
       echo "Do you want to claim a draw? (y/N)"
       draw = readLine(stdin)
       if (draw == "y"):

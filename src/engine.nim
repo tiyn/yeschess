@@ -17,7 +17,7 @@ const
   DrawVal = 0           ## `DrawVal` is the engines value for a draw.
   LoVal = -1000000      ## `LoVal` is a value always lower than  any evaluation.
 
-proc pieceEval*(chess: Chess): int =
+proc pieceEval(chess: Chess): int =
   ## Returns the evaluation of existing pieces on the `board`
   var evaluation = DrawVal
   for square in chess.board:
@@ -63,7 +63,7 @@ proc evaluate(chess: Chess): int =
         evaluation = min(DrawVal, evaluation)
   return evaluation
 
-proc spanMoveTree*(chess: Chess, depth: int): MoveTree =
+proc spanMoveTree(chess: Chess, depth: int): MoveTree =
   ## Create and return a Movetree of a given `chess` with a given maximum `depth`.
   var mTree: MoveTree
   mTree.chess = chess
@@ -75,7 +75,7 @@ proc spanMoveTree*(chess: Chess, depth: int): MoveTree =
       mTree.children.add(spanMoveTree(tmpChess, depth-1))
   return mTree
 
-proc negaMax*(mTree: MoveTree): int =
+proc negaMax(mTree: MoveTree): int =
   ## Return the value of the root node of a given `MoveTree`
   if mTree.children == []:
     return mTree.chess.evaluate()

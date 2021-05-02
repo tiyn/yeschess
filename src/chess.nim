@@ -6,7 +6,7 @@ type
     ## `Color` describes the possible color of players.
     Black = -1,
     White = 1
-  Board* = array[0..119, int] ## \
+  Board = array[0..119, int] ## \
     ## `Board` saves the position of the chess pieces.
   CastleRights = tuple
     ## `CastleRights` contains the rights to castling for each player.
@@ -24,8 +24,8 @@ type
     castleRights: CastleRights
   Move* = object
     ## `Move` stores all important information for a move.
-    start*: int
-    dest*: int
+    start: int
+    dest: int
     color: Color
     prom: int
   PieceAmount = tuple
@@ -39,7 +39,7 @@ type
   Pieces = array[10,int]
 
 const
-  Block* = 999                                         ## \
+  Block = 999                                         ## \
     ## `Block` is the value assigned to empty blocked fields in a board.
   WPawn* = 1
     ## `WPawn` is the value assigned to a square in a board with a white pawn.
@@ -54,9 +54,9 @@ const
   WQueen* = 5                                          ## \
     ## `WQueen` is the value assigned to a square in a board with a white
     ## queen.
-  WKing* = 6                                           ## \
+  WKing = 6                                           ## \
     ## `WKing` is the value assigned to a square in a board with a white king.
-  WEnPassant* = 7                                      ## \
+  WEnPassant = 7                                      ## \
     ## `WEnPassant` is assigned to a square in a board with an invisible white
     ## en passant pawn.
   BPawn* = -WPawn                                      ## \
@@ -71,9 +71,9 @@ const
     ## `BRook` is the value assigned to a square in a board with a black rook.
   BQueen* = -WQueen                                    ## \
     ## `BQueen` is the value assigned to a square in a board with a black queen.
-  BKing* = -WKing                                      ## \
+  BKing = -WKing                                      ## \
     ## `BKing` is the value assigned to a square in a board with a black king.
-  BEnPassant* = -WEnPassant                            ## \
+  BEnPassant = -WEnPassant                            ## \
     ## `BEnPassant` is assigned to a square in a board with an invisible black
     ## en passant pawn.
   N = 10 ## `N` describes a move a field up the board from whites perspective.
@@ -142,7 +142,7 @@ let
   # `FileChar` maps the files of the chessboard to numbers for better
   # conversion.
 
-proc fieldToInd*(field: string): int =
+proc fieldToInd(field: string): int =
   ## Calculate and return board index from `field` of a chess board.
   ## Returns -1 if the `field` was not input correct.
   try:
@@ -152,7 +152,7 @@ proc fieldToInd*(field: string): int =
   except IndexDefect, ValueError:
     return -1
 
-proc indToField*(ind: int): string =
+proc indToField(ind: int): string =
   ## Calculate and returns field name from board index `ind`.
   let line = (int)ind/10-1
   let file_ind = 7-((ind)%%10-1)
@@ -160,7 +160,7 @@ proc indToField*(ind: int): string =
     if FileChar[file] == file_ind:
       return $file & $line
 
-proc getMove*(start: int, dest: int, prom: int, color: Color): Move =
+proc getMove(start: int, dest: int, prom: int, color: Color): Move =
   ## Get a move object of the `color` player from `start` to `dest` with an
   ## eventual promition to `prom`.
   var move = Move(start: start, dest: dest, prom: prom * ord(color), color: color)
@@ -168,7 +168,7 @@ proc getMove*(start: int, dest: int, prom: int, color: Color): Move =
     move.prom = WQueen
   return move
 
-proc getMove*(start: int, dest: int, color: Color): Move =
+proc getMove(start: int, dest: int, color: Color): Move =
   ## Get a move object of the `color` player from `start` to `dest` with
   ## automatic promition to queen.
   var move = Move(start: start, dest: dest, prom: WQueen * ord(color), color: color)
@@ -259,7 +259,7 @@ proc initChess*(): Chess =
           fiftyMoveCounter: 0, castleRights: (true, true, true, true))
   return chess
 
-proc initChess*(board: array[0..63, int], color: Color): Chess =
+proc initChess(board: array[0..63, int], color: Color): Chess =
   ## Create and return a Chess object based on a position of choice.
   ## `board` describes the pieces, `color` the color that is about to move.
   let board = initBoard(board)
@@ -533,7 +533,7 @@ proc isAttacked(chess: Chess, position: int, color: Color): bool =
       color), WKnight)
   return attacked
 
-proc isInCheck*(chess: Chess, color: Color): bool =
+proc isInCheck(chess: Chess, color: Color): bool =
   ## Returns true if the king of a given `color` is in check in a `chess`.
   var king_pos: int
   for i in countup(0, chess.board.high):
@@ -663,7 +663,7 @@ proc genLegalKingMoves(chess: Chess, field: int, color: Color): seq[Move] =
       res.add(getMove(field, dest, color))
   return res
 
-proc genLegalMoves*(chess: Chess, field: int, color: Color): seq[Move] =
+proc genLegalMoves(chess: Chess, field: int, color: Color): seq[Move] =
   ## Generates all legal moves in a `chess` starting from `field` for a `color`.
   var legal_moves = newSeq[Move]()
   var target = ord(color) * chess.board[field]

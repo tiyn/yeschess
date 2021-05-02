@@ -54,7 +54,7 @@ const
   WQueen* = 5                                          ## \
     ## `WQueen` is the value assigned to a square in a board with a white
     ## queen.
-  WKing = 6                                           ## \
+  WKing* = 6                                           ## \
     ## `WKing` is the value assigned to a square in a board with a white king.
   WEnPassant = 7                                      ## \
     ## `WEnPassant` is assigned to a square in a board with an invisible white
@@ -71,7 +71,7 @@ const
     ## `BRook` is the value assigned to a square in a board with a black rook.
   BQueen* = -WQueen                                    ## \
     ## `BQueen` is the value assigned to a square in a board with a black queen.
-  BKing = -WKing                                      ## \
+  BKing* = -WKing                                      ## \
     ## `BKing` is the value assigned to a square in a board with a black king.
   BEnPassant = -WEnPassant                            ## \
     ## `BEnPassant` is assigned to a square in a board with an invisible black

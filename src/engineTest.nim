@@ -86,7 +86,8 @@ testSuite ChessTest of TestSuite:
     ], Color.Black)
     var testBestMove = self.chess.bestMove(2)
     self.check(testBestMove.start != 0)
-    self.check(indToField(testBestMove.start) != "g5" or indToField(testBestMove.dest) != "f4")
+    self.check(indToField(testBestMove.start) != "g5" or indToField(
+        testBestMove.dest) != "f4")
 
   method testBestMoveTacticWhite() =
     self.chess = initChess([
@@ -101,7 +102,8 @@ testSuite ChessTest of TestSuite:
     ], Color.White)
     var testBestMove = self.chess.bestMove(2)
     self.check(testBestMove.start != 0)
-    self.check(indToField(testBestMove.start) != "g4" or indToField(testBestMove.dest) != "f5")
+    self.check(indToField(testBestMove.start) != "g4" or indToField(
+        testBestMove.dest) != "f5")
 
 
 when isMainModule:

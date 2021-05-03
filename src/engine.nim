@@ -32,7 +32,7 @@ const
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-  ]                      ## `pawnTable` is the piece-square table for pawns.
+  ]                     ## `pawnTable` is the piece-square table for pawns.
   knightTable = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -46,7 +46,7 @@ const
     0, -50, -40, -30, -30, -30, -30, -40, -50, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-  ]                      ## `knightTable` is the piece-square table for pawns.
+  ]                     ## `knightTable` is the piece-square table for pawns.
   bishopTable = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -60,7 +60,7 @@ const
     0, -20, -10, -10, -10, -10, -10, -10, -20, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-  ]                      ## `bishopTable` is the piece-square table for pawns.
+  ]                     ## `bishopTable` is the piece-square table for pawns.
   rookTable = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -74,7 +74,7 @@ const
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-  ]                      ## `rookTable` is the piece-square table for pawns.
+  ]                     ## `rookTable` is the piece-square table for pawns.
   queenTable = [
      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -88,7 +88,7 @@ const
      0, -20, -10, -10, -5, -5, -10, -10, -20, 0,
      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    ]                    ## `queenTable` is the piece-square table for pawns.
+    ]                   ## `queenTable` is the piece-square table for pawns.
   kingTable = [
      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

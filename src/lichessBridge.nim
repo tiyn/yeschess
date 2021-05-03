@@ -39,7 +39,7 @@ proc playLichessGame(id: string) {.async.} =
         chess.echoBoard(chess.toMove)
       if chess.toMove == color:
         echo("engine has to make a move")
-        var bestMove = moveToNotation(chess.bestMove(engineDifficulty))
+        var bestMove = moveToNotation(chess.bestMove(engineDifficulty), chess.board)
         echo(bestMove)
         discard client.bots.make_move(id, bestMove)
 

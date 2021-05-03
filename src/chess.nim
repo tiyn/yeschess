@@ -148,14 +148,14 @@ proc fieldToInd(field: string): int =
   try:
     var file = $field[0]
     var line = parseInt($field[1])
-    return 1+(line+1)*10+(7-FileChar[file])
+    return 1 + (line + 1) * 10 + (7 - FileChar[file])
   except IndexDefect, ValueError:
     return -1
 
 proc indToField(ind: int): string =
   ## Calculate and returns field name from board index `ind`.
-  let line = (int)ind/10-1
-  let file_ind = 7-((ind)%%10-1)
+  let line = int(ind / 10 - 1)
+  let file_ind = 7 - ((ind) %% 10 - 1)
   for file, i in FileChar:
     if FileChar[file] == file_ind:
       return $file & $line
@@ -164,7 +164,7 @@ proc getMove(start: int, dest: int, prom: int, color: Color): Move =
   ## Get a move object of the `color` player from `start` to `dest` with an
   ## eventual promition to `prom`.
   var move = Move(start: start, dest: dest, prom: prom * ord(color), color: color)
-  if (WKnight > prom or WQueen < prom):
+  if (prom < WKnight or prom > WQueen):
     move.prom = WQueen
   return move
 
@@ -183,30 +183,29 @@ proc notationToMove*(notation: string, color: Color): Move =
   move = getMove(start, dest, color)
   if (len(notation) > 4):
     var promStr = $notation[4]
-    var prom: int
-    case promStr:
-      of "Q":
-        prom = WQueen * ord(color)
+    let prom = case promStr:
       of "R":
-        prom = WRook * ord(color)
+        WRook * ord(color)
       of "B":
-        prom = WBishop * ord(color)
+        WBishop * ord(color)
       of "N":
-        prom = WKnight * ord(color)
+        WKnight * ord(color)
+      else:
+        WQueen * ord(color)
     move = getMove(start, dest, prom, color)
   return move
 
-proc moveToNotation*(move: Move): string =
+proc moveToNotation*(move: Move, board: Board): string =
   ## Convert and return a `move` object to simplified algebraic chess notation.
-  var res = ""
+  var res: string
   var start = indToField(move.start)
   res.add(start)
   var dest = indToField(move.dest)
   res.add(dest)
   var color = move.color
   var prom = PieceChar[move.prom]
-  if (color == Color.White and dest[1] == '8') or (color == Color.Black and
-      dest[1] == '1'):
+  if abs(board[move.start]) == WPawn and ((color == Color.White and dest[1] ==
+      '8') or (color == Color.Black and dest[1] == '1')):
     res.add(prom)
   return res
 
@@ -266,10 +265,10 @@ proc initChess(board: array[0..63, int], color: Color): Chess =
   let board = initBoard(board)
   let compare = initBoard()
   var same_piece: bool
-  var wk = false
-  var wq = false
-  var bk = false
-  var bq = false
+  var wk: bool
+  var wq: bool
+  var bk: bool
+  var bq: bool
   if (board[fieldToInd("e1")] == compare[fieldToInd("e1")]):
     if (board[fieldToInd("a1")] == compare[fieldToInd("a1")]):
       wq = true
@@ -283,8 +282,7 @@ proc initChess(board: array[0..63, int], color: Color): Chess =
   for ind in board.low..board.high:
     same_piece = (board[ind] != compare[ind])
   let chess = Chess(board: board,
-      to_move: color, previousBoard: @[], previousCastleRights: @[],
-          fiftyMoveCounter: 0, castleRights: (wk, wq, bk, bq))
+      to_move: color, castleRights: (wk, wq, bk, bq))
   return chess
 
 proc echoBoard*(chess: Chess, color: Color) =
@@ -292,21 +290,21 @@ proc echoBoard*(chess: Chess, color: Color) =
   ## indices from perspecive of `color`.
   var line_str = ""
   if (color == Color.Black):
-    for i in countup(0, len(chess.board)-1):
-      if (chess.board[i] == 999):
+    for i in 0..len(chess.board)-1:
+      if (chess.board[i] == Block):
         continue
       line_str &= PieceChar[chess.board[i]] & " "
-      if ((i+2) %% 10 == 0):
-        line_str &= $((int)((i)/10)-1) & "\n"
+      if ((i + 2) %% 10 == 0):
+        line_str &= $(int((i / 10) - 1)) & "\n"
     echo line_str
     echo "h g f e d c b a"
   else:
-    for i in countdown(len(chess.board)-1, 0):
-      if (chess.board[i] == 999):
+    for i in len(chess.board)-1..0:
+      if (chess.board[i] == Block):
         continue
       line_str &= PieceChar[chess.board[i]] & " "
-      if ((i-1) %% 10 == 0):
-        line_str &= $((int)((i)/10)-1) & "\n"
+      if ((i - 1) %% 10 == 0):
+        line_str &= $(int((i / 10) - 1)) & "\n"
     echo line_str
     echo "a b c d e f g h"
 
@@ -324,7 +322,7 @@ proc genPawnAttackDests(chess: Chess, field: int, color: Color): seq[int] =
     if (not dest in chess.board.low..chess.board.high):
       continue
     target = chess.board[dest]
-    if (target == 999 or ord(color) * target >= 0):
+    if (target == Block or ord(color) * target >= 0):
       continue
     res.add(dest)
   return res
@@ -344,7 +342,7 @@ proc genPawnDoubleDests(chess: Chess, field: int, color: Color): seq[int] =
       continue
     target = chess.board[dest]
     if ((target != 0) or (
-        chess.board[dest+(S*ord(color))] != 0)):
+        chess.board[dest + (S * ord(color))] != 0)):
       continue
     if (color == Color.White and not (field in fieldToInd("h2")..fieldToInd("a2"))):
       continue
@@ -388,7 +386,7 @@ proc genKnightDests(chess: Chess, field: int, color: Color): seq[int] =
     if (not dest in chess.board.low..chess.board.high):
       continue
     target = chess.board[dest]
-    if (target == 999 or (ord(color) * target > 0 and ord(color) * target != WEnPassant)):
+    if (target == Block or (ord(color) * target > 0 and ord(color) * target != WEnPassant)):
       continue
     res.add(dest)
   return res
@@ -403,16 +401,16 @@ proc genBishopDests(chess: Chess, field: int, color: Color): seq[int] =
   var dest: int
   var target: int
   for move in Bishop_Moves:
-    dest = field+move
+    dest = field + move
     if (not dest in chess.board.low..chess.board.high):
       continue
     target = chess.board[dest]
-    while (target != 999 and (ord(color) * target <= 0) or target ==
-        WEnPassant or target == -WEnPassant):
+    while (target != Block and (ord(color) * target <= 0) or abs(target) ==
+        WEnPassant):
       res.add(dest)
-      if (ord(color) * target < 0 and ord(color) * target > -WEnPassant):
+      if (ord(color) * target < 0 and ord(color) * target > BEnPassant):
         break
-      dest = dest+move
+      dest = dest + move
       target = chess.board[dest]
   return res
 
@@ -426,16 +424,16 @@ proc genRookDests(chess: Chess, field: int, color: Color): seq[int] =
   var dest: int
   var target: int
   for move in Rook_Moves:
-    dest = field+move
+    dest = field + move
     if (not dest in chess.board.low..chess.board.high):
       continue
     target = chess.board[dest]
-    while (target != 999 and (ord(color) * target <= 0) or target ==
-        WEnPassant or target == -WEnPassant):
+    while (target != Block and (ord(color) * target <= 0) or abs(target) ==
+        WEnPassant):
       res.add(dest)
-      if (ord(color) * target < 0 and ord(color) * target > -WEnPassant):
+      if (ord(color) * target < 0 and ord(color) * target > BEnPassant):
         break
-      dest = dest+move
+      dest = dest + move
       target = chess.board[dest]
   return res
 
@@ -449,16 +447,16 @@ proc genQueenDests(chess: Chess, field: int, color: Color): seq[int] =
   var dest: int
   var target: int
   for move in Queen_Moves:
-    dest = field+move
+    dest = field + move
     if (not dest in chess.board.low..chess.board.high):
       continue
     target = chess.board[dest]
-    while (target != 999 and (ord(color) * target <= 0) or target ==
-        WEnPassant or target == -WEnPassant):
+    while (target != Block and (ord(color) * target <= 0) or abs(target) ==
+        WEnPassant):
       res.add(dest)
-      if (ord(color) * target < 0 and ord(color) * target > -WEnPassant):
+      if (ord(color) * target < 0 and ord(color) * target > BEnPassant):
         break
-      dest = dest+move
+      dest = dest + move
       target = chess.board[dest]
   return res
 
@@ -478,11 +476,11 @@ proc genKingCastleDest(chess: Chess, field: int, color: Color): seq[int] =
     if (not dest in chess.board.low..chess.board.high):
       continue
     target = chess.board[dest]
-    half_dest = field + (int)castle/2
+    half_dest = field + int(castle / 2)
     half_target = chess.board[half_dest]
-    if (target == 999 or (target != 0)):
+    if (target == Block or (target != 0)):
       continue
-    if (half_target == 999 or (half_target != 0)):
+    if (half_target == Block or (half_target != 0)):
       continue
     res.add(dest)
   return res
@@ -501,7 +499,7 @@ proc genKingDests(chess: Chess, field: int, color: Color): seq[int] =
     if (not dest in chess.board.low..chess.board.high):
       continue
     target = chess.board[dest]
-    if (target == 999 or (ord(color) * target > 0 and ord(color) * target != WEnPassant)):
+    if (target == Block or (ord(color) * target > 0 and ord(color) * target != WEnPassant)):
       continue
     res.add(dest)
   res.add(chess.genKingCastleDest(field, color))
@@ -512,7 +510,7 @@ proc pieceOn(chess: Chess, color: Color, sequence: seq[int],
   ## Returns true if the `PieceID` of a given `color` is in `sequence` else
   ## wrong.
   for check in sequence:
-    if chess.board[check] == ord(color) * -1 * pieceID:
+    if chess.board[check] == ord(color) * -pieceID:
       return true
   return false
 
@@ -537,7 +535,7 @@ proc isAttacked(chess: Chess, position: int, color: Color): bool =
 proc isInCheck(chess: Chess, color: Color): bool =
   ## Returns true if the king of a given `color` is in check in a `chess`.
   var king_pos: int
-  for i in countup(0, chess.board.high):
+  for i in 0..chess.board.high:
     if chess.board[i] == ord(color) * WKing:
       king_pos = i
   return chess.isAttacked(king_pos, color)
@@ -548,22 +546,20 @@ proc uncheckedMove(chess: var Chess, start: int, dest: int): bool {.discardable.
   let piece = chess.board[start]
   chess.board[start] = 0
   chess.board[dest] = piece
-  if (start == fieldToInd("e1") or start == fieldToInd("a1")):
-    chess.castleRights.wq = false
-  if (start == fieldToInd("e1") or start == fieldToInd("h1")):
+  if start == fieldToInd("e1"):
     chess.castleRights.wk = false
-  if (start == fieldToInd("e8") or start == fieldToInd("a8")):
-    chess.castleRights.bq = false
-  if (start == fieldToInd("e8") or start == fieldToInd("h8")):
-    chess.castleRights.bk = false
-  if (dest == fieldToInd("e1") or dest == fieldToInd("a1")):
     chess.castleRights.wq = false
-  if (dest == fieldToInd("e1") or dest == fieldToInd("h1")):
+  elif start == fieldToInd("h1"):
     chess.castleRights.wk = false
-  if (dest == fieldToInd("e8") or dest == fieldToInd("a8")):
-    chess.castleRights.bq = false
-  if (dest == fieldToInd("e8") or dest == fieldToInd("h8")):
+  elif start == fieldToInd("a1"):
+    chess.castleRights.wq = false
+  elif start == fieldToInd("e8"):
     chess.castleRights.bk = false
+    chess.castleRights.bq = false
+  elif start == fieldToInd("h8"):
+    chess.castleRights.bk = false
+  elif start == fieldToInd("a8"):
+    chess.castleRights.bq = false
   return true
 
 proc moveLeadsToCheck(chess: Chess, start: int, dest: int,
@@ -656,9 +652,9 @@ proc genLegalKingMoves(chess: Chess, field: int, color: Color): seq[Move] =
   var res = newSeq[Move]()
   var moves = chess.genKingDests(field, color)
   for dest in moves:
-    if field - dest == W+W and chess.isAttacked(dest+W, color):
+    if field - dest == W + W and chess.isAttacked(dest + W, color):
       continue
-    if field - dest == E+E and chess.isAttacked(dest+E, color):
+    if field - dest == E + E and chess.isAttacked(dest + E, color):
       continue
     if not chess.moveLeadsToCheck(field, dest, color):
       res.add(getMove(field, dest, color))
@@ -702,10 +698,10 @@ proc castling(chess: var Chess, kstart: int, dest_kingside: bool,
   ## of `chess.to_move`
   if chess.toMove != color:
     return false
-  var kdest = kstart
+  var kdest: int
   var rstart: int
   var rdest: int
-  var rights = false
+  var rights: bool
   if (dest_kingside):
     kdest = kstart + (E+E)
     rstart = kstart + (E+E+E)
@@ -723,7 +719,7 @@ proc castling(chess: var Chess, kstart: int, dest_kingside: bool,
     else:
       rights = chess.castleRights.bq
   if (rights):
-    var check = false
+    var check: bool
     if (dest_kingside):
       check = check or chess.isAttacked(kstart, color)
       check = check or chess.isAttacked(kstart+(E), color)
@@ -736,7 +732,7 @@ proc castling(chess: var Chess, kstart: int, dest_kingside: bool,
       return false
     chess.uncheckedMove(kstart, kdest)
     chess.uncheckedMove(rstart, rdest)
-    chess.toMove = Color(ord(chess.toMove)*(-1))
+    chess.toMove = Color(ord(chess.toMove) * (-1))
     return true
   return false
 
@@ -758,9 +754,9 @@ proc checkedMove*(chess: var Chess, move: Move): bool {.discardable.} =
     return false
   var sequence = newSeq[Move]()
   let piece = chess.board[start]
-  var createEnPassant = false
-  var capturedEnPassant = false
-  var fiftyMoveRuleReset = false
+  var createEnPassant: bool
+  var capturedEnPassant: bool
+  var fiftyMoveRuleReset: bool
   var move: Move
   move = getMove(start, dest, color)
   if (piece == WPawn * ord(color)):
@@ -770,7 +766,6 @@ proc checkedMove*(chess: var Chess, move: Move): bool {.discardable.} =
   if (chess.board[move.dest] != 0):
     fiftyMoveRuleReset = true
   sequence.add(chess.genLegalMoves(start, color))
-  # TODO: don't generate all legal moves, just check if result is legal and reachable
   if (move in sequence):
     chess.board.removeEnPassant(color)
     if (piece == WKing * ord(color) and (start - dest == (W+W))):
@@ -781,9 +776,9 @@ proc checkedMove*(chess: var Chess, move: Move): bool {.discardable.} =
       chess.uncheckedMove(start, dest)
     chess.toMove = Color(ord(chess.toMove)*(-1))
     if createEnPassant:
-      chess.board[dest-(N*ord(color))] = WEnPassant * ord(color)
+      chess.board[dest - (N * ord(color))] = WEnPassant * ord(color)
     if capturedEnPassant:
-      chess.board[dest-(N*ord(color))] = 0
+      chess.board[dest - (N * ord(color))] = 0
     if ((90 < dest and dest < 99) or (20 < dest and dest < 29)) and
         chess.board[dest] == WPawn * ord(color):
       chess.board[dest] = prom
@@ -811,7 +806,7 @@ proc threeMoveRep(chess: Chess): bool =
     return false
   var lastState = chess.previousBoard[chess.previousBoard.high]
   var lastCastleRights = chess.previousCastleRights[chess.previousBoard.high]
-  var reps = 0
+  var reps: int
   for stateInd in (chess.previousBoard.low)..(chess.previousBoard.high):
     if (chess.previousBoard[stateInd] == lastState and
         chess.previousCastleRights[stateInd] == lastCastleRights):

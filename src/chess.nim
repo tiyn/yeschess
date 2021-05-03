@@ -667,8 +667,8 @@ proc genLegalKingMoves(chess: Chess, field: int, color: Color): seq[Move] =
 proc genLegalMoves(chess: Chess, field: int, color: Color): seq[Move] =
   ## Generates all legal moves in a `chess` starting from `field` for a `color`.
   var legal_moves = newSeq[Move]()
-  var target = ord(color) * chess.board[field]
-  if 0 < target and target < WEnPassant:
+  var target = abs(chess.board[field])
+  if WPawn <= target and target <= WKing:
     legal_moves = case target:
       of WPawn:
         chess.genLegalPawnMoves(field, color)

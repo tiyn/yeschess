@@ -38,7 +38,8 @@ Due to easier off the board checking a
 ### Engine
 
 The engine uses a simple implementation of the
-[NegaMax](https://www.chessprogramming.org/NegaMax)-algorithm.
+[NegaMax](https://www.chessprogramming.org/NegaMax)-algorithm with
+[Alpha-Beta-Pruning](https://www.chessprogramming.org/Alpha-Beta#Negamax_Framework).
 For the evaluation function each piece has a corresponding value.
 Additionally there are [piece-square tables](https://www.chessprogramming.org/Piece-Square_Tables)
 to encurage putting pieces on active squares.

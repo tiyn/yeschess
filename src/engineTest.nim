@@ -25,20 +25,6 @@ testSuite ChessTest of TestSuite:
     var pieceEvaluation = self.chess.pieceEval()
     self.check(pieceEvaluation == 0)
 
-  method testSpanMoveTree() =
-    self.chess = initChess([
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, WKing, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, BKing, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0
-    ], Color.Black)
-    var mTree = self.chess.spanMoveTree(1)
-    self.check(mTree.children == [])
-
   method testBestMoveProm() =
     self.chess = initChess([
       0, 0, 0, 0, 0, 0, 0, 0,

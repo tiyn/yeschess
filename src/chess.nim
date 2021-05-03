@@ -36,10 +36,10 @@ type
     b: int # `b` describes the amount of bishops.
     r: int # `r` describes the amount of rooks.
     q: int # `q` describes the amount of queens.
-  Pieces = array[10,int]
+  Pieces = array[10, int]
 
 const
-  Block = 999                                         ## \
+  Block = 999                                          ## \
     ## `Block` is the value assigned to empty blocked fields in a board.
   WPawn* = 1
     ## `WPawn` is the value assigned to a square in a board with a white pawn.
@@ -54,9 +54,9 @@ const
   WQueen* = 5                                          ## \
     ## `WQueen` is the value assigned to a square in a board with a white
     ## queen.
-  WKing = 6                                           ## \
+  WKing* = 6                                           ## \
     ## `WKing` is the value assigned to a square in a board with a white king.
-  WEnPassant = 7                                      ## \
+  WEnPassant = 7                                       ## \
     ## `WEnPassant` is assigned to a square in a board with an invisible white
     ## en passant pawn.
   BPawn* = -WPawn                                      ## \
@@ -71,9 +71,9 @@ const
     ## `BRook` is the value assigned to a square in a board with a black rook.
   BQueen* = -WQueen                                    ## \
     ## `BQueen` is the value assigned to a square in a board with a black queen.
-  BKing = -WKing                                      ## \
+  BKing* = -WKing                                      ## \
     ## `BKing` is the value assigned to a square in a board with a black king.
-  BEnPassant = -WEnPassant                            ## \
+  BEnPassant = -WEnPassant                             ## \
     ## `BEnPassant` is assigned to a square in a board with an invisible black
     ## en passant pawn.
   N = 10 ## `N` describes a move a field up the board from whites perspective.
@@ -205,7 +205,8 @@ proc moveToNotation*(move: Move): string =
   res.add(dest)
   var color = move.color
   var prom = PieceChar[move.prom]
-  if (color == Color.White and dest[1] == '8') or (color == Color.Black and dest[1] == '1'):
+  if (color == Color.White and dest[1] == '8') or (color == Color.Black and
+      dest[1] == '1'):
     res.add(prom)
   return res
 
@@ -812,8 +813,8 @@ proc threeMoveRep(chess: Chess): bool =
   var lastCastleRights = chess.previousCastleRights[chess.previousBoard.high]
   var reps = 0
   for stateInd in (chess.previousBoard.low)..(chess.previousBoard.high):
-    if (chess.previousBoard[stateInd] == lastState and chess.previousCastleRights[
-        stateInd] == lastCastleRights):
+    if (chess.previousBoard[stateInd] == lastState and
+        chess.previousCastleRights[stateInd] == lastCastleRights):
       reps = reps + 1
   return reps >= 3
 
@@ -837,10 +838,12 @@ proc checkInsufficientMaterial(board: Board): bool =
       index = piece - WPawn # map lowest value to 0
       pieces[index] += 1
     elif piece <= BPawn and piece >= BRook:
-      index = WRook - piece  # map black pieces after whites
+      index = WRook - piece # map black pieces after whites
       pieces[index] += 1
-  let wpieces: PieceAmount = (pieces[0], pieces[1], pieces[2], pieces[3], pieces[4])
-  let bpieces: PieceAmount = (pieces[5], pieces[6], pieces[7], pieces[8], pieces[9])
+  let wpieces: PieceAmount = (pieces[0], pieces[1], pieces[2], pieces[3],
+      pieces[4])
+  let bpieces: PieceAmount = (pieces[5], pieces[6], pieces[7], pieces[8],
+      pieces[9])
   return (wpieces in InsufficientMaterial) and (bpieces in InsufficientMaterial)
 
 proc isStalemate*(chess: Chess, color: Color): bool =

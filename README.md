@@ -39,3 +39,6 @@ Due to easier off the board checking a
 
 The engine uses a simple implementation of the
 [NegaMax](https://www.chessprogramming.org/NegaMax)-algorithm.
+For the evaluation function each piece has a corresponding value.
+Additionally there are [piece-square tables](https://www.chessprogramming.org/Piece-Square_Tables)
+to encurage putting pieces on active squares.

@@ -8,10 +8,10 @@ import ./engine.nim
 let berserk = pyImport("berserk")
 
 var session = berserk.TokenSession(secret.api_token)
-var client = berserk.Client(session=session)
+var client = berserk.Client(session = session)
 
 let engineID = "tiyn-ychess"
-let engineDifficulty = 2
+let engineDifficulty = 3
 let toAccept = ["tiynger"]
 
 

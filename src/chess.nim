@@ -296,7 +296,7 @@ proc echoBoard*(chess: Chess, color: Color) =
     echo line_str
     echo "h g f e d c b a"
   else:
-    for i in countdown(len(chess.board)-1, 0):
+    for i in countdown(len(chess.board) - 1, 0):
       if (chess.board[i] == Block):
         continue
       line_str &= PieceChar[chess.board[i]] & " "
@@ -386,7 +386,8 @@ proc genKnightDests(chess: Chess, field: int, color: Color): seq[int] =
     res.add(dest)
   return res
 
-proc genSlidePieceDests(chess: Chess, field: int, color: Color, moves: seq[int]): seq[int] =
+proc genSlidePieceDests(chess: Chess, field: int, color: Color, moves: seq[
+    int]): seq[int] =
   ## Generate possible destinations for a piece with `moves` and specific `color`
   ## located at index `field` of `chess`.
   ## Returns a sequence of possible indices to move to.
@@ -542,10 +543,23 @@ proc genPawnPromotion(move: Move, color: Color): seq[Move] =
   var promotions = newSeq[Move]()
   let start = move.start
   let dest = move.dest
-  if (90 < dest and dest < 99) or (20 < dest and dest < 29):
+  if (fieldToInd("h8") <= dest and dest <= fieldToInd("a8")) or
+    (fieldToInd("h1") <= dest and dest <= fieldToInd("a1")):
     for piece in WKnight..WQueen:
       promotions.add(getMove(start, dest, piece, color))
   return promotions
+
+proc genLegalMovesStd(chess: Chess, field: int, color: Color, piece: int,
+  moves: seq[int]): seq[Move] =
+  ## Generates all legal knight moves in a `chess` starting from `field` for a
+  ## `color`.
+  if chess.board[field] != piece * ord(color):
+    return @[]
+  var res = newSeq[Move]()
+  for dest in moves:
+    if not chess.moveLeadsToCheck(field, dest, color):
+      res.add(getMove(field, dest, color))
+  return res
 
 proc genLegalPawnMoves(chess: Chess, field: int, color: Color): seq[Move] =
   ## Generates all legal pawn moves in a `chess` starting from `field` for a
@@ -566,66 +580,32 @@ proc genLegalPawnMoves(chess: Chess, field: int, color: Color): seq[Move] =
 proc genLegalKnightMoves(chess: Chess, field: int, color: Color): seq[Move] =
   ## Generates all legal knight moves in a `chess` starting from `field` for a
   ## `color`.
-  if chess.board[field] != WKnight * ord(color):
-    return @[]
-  var res = newSeq[Move]()
-  var moves = chess.genKnightDests(field, color)
-  for dest in moves:
-    if not chess.moveLeadsToCheck(field, dest, color):
-      res.add(getMove(field, dest, color))
-  return res
+  return genLegalMovesStd(chess, field, color, WKnight, chess.genKnightDests(
+      field, color))
 
 proc genLegalBishopMoves(chess: Chess, field: int, color: Color): seq[Move] =
   ## Generates all legal bishop moves in a `chess` starting from `field` for a
   ## `color`.
-  if chess.board[field] != WBishop * ord(color):
-    return @[]
-  var res = newSeq[Move]()
-  var moves = chess.genBishopDests(field, color)
-  for dest in moves:
-    if not chess.moveLeadsToCheck(field, dest, color):
-      res.add(getMove(field, dest, color))
-  return res
+  return genLegalMovesStd(chess, field, color, WBishop, chess.genBishopDests(
+      field, color))
 
 proc genLegalRookMoves(chess: Chess, field: int, color: Color): seq[Move] =
   ## Generates all legal rook moves in a `chess` starting from `field` for a
   ## `color`.
-  if chess.board[field] != WRook * ord(color):
-    return @[]
-  var res = newSeq[Move]()
-  var moves = chess.genRookDests(field, color)
-  for dest in moves:
-    if not chess.moveLeadsToCheck(field, dest, color):
-      res.add(getMove(field, dest, color))
-  return res
+  return genLegalMovesStd(chess, field, color, WRook, chess.genRookDests(
+      field, color))
 
 proc genLegalQueenMoves(chess: Chess, field: int, color: Color): seq[Move] =
   ## Generates all legal queen moves in a `chess` starting from `field` for a
   ## `color`.
-  if chess.board[field] != WQueen * ord(color):
-    return @[]
-  var res = newSeq[Move]()
-  var moves = chess.genQueenDests(field, color)
-  for dest in moves:
-    if not chess.moveLeadsToCheck(field, dest, color):
-      res.add(getMove(field, dest, color))
-  return res
+  return genLegalMovesStd(chess, field, color, WQueen, chess.genQueenDests(
+      field, color))
 
 proc genLegalKingMoves(chess: Chess, field: int, color: Color): seq[Move] =
   ## Generates all legal king moves in a `chess` starting from `field` for a
   ## `color`.
-  if chess.board[field] != WKing * ord(color):
-    return @[]
-  var res = newSeq[Move]()
-  var moves = chess.genKingDests(field, color)
-  for dest in moves:
-    if field - dest == W + W and chess.isAttacked(dest + W, color):
-      continue
-    if field - dest == E + E and chess.isAttacked(dest + E, color):
-      continue
-    if not chess.moveLeadsToCheck(field, dest, color):
-      res.add(getMove(field, dest, color))
-  return res
+  return genLegalMovesStd(chess, field, color, WKing, chess.genKingDests(
+      field, color))
 
 proc genLegalMoves(chess: Chess, field: int, color: Color): seq[Move] =
   ## Generates all legal moves in a `chess` starting from `field` for a `color`.

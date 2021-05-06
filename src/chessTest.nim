@@ -83,188 +83,53 @@ testSuite ChessTest of TestSuite:
     self.check(not self.chess.isStalemate(Color.Black))
 
   method testIsStalemateTrueWhite() =
-    self.chess = initChess([
-      0, 0, 0, 0, BRook, BQueen, BRook, BKnight,
-      0, BPawn, 0, 0, BPawn, BPawn, BBishop, WKing,
-      0, BPawn, 0, BPawn, 0, BPawn, 0, BKnight,
-      0, 0, 0, 0, 0, 0, BPawn, 0,
-      0, 0, BBishop, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, BPawn, BKing, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0
-    ], Color.White)
+    self.chess = initChess("8/5kp1/8/5b2/1p6/n1p1p1p1/Kbpp2p1/nrqr4 w - - 0 0")
     self.check(self.chess.isStalemate(Color.White))
 
   method testIsStalemateTrueBlack() =
-    self.chess = initChess([
-      0, 0, 0, 0, WRook, WQueen, WRook, WKnight,
-      0, WPawn, 0, 0, WPawn, WPawn, WBishop, BKing,
-      0, WPawn, 0, WPawn, 0, WPawn, 0, WKnight,
-      0, 0, 0, 0, 0, 0, WPawn, 0,
-      0, 0, WBishop, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, WPawn, WKing, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0
-    ], Color.Black)
+    self.chess = initChess("8/5KP1/8/5B2/1P6/N1P1P1P1/kBPP2P1/NRQR4 b - - 0 0")
     self.check(self.chess.isStalemate(Color.Black))
 
   method testIsStalemateInsufficientMaterialTrue() =
-    self.chess = initChess([
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, WKing, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, BKing, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0
-    ], Color.Black)
+    self.chess = initChess("8/2k5/8/8/8/8/4K3/8 b - - 0 0")
     self.check(self.chess.isStalemate(Color.Black))
     self.check(self.chess.isStalemate(Color.White))
-    self.chess = initChess([
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, WKing, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, WKnight,
-      0, 0, WKnight, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, BKing, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0
-    ], Color.Black)
+    self.chess = initChess("8/2k5/8/5N2/N7/8/4K3/8 b - - 0 0")
     self.check(self.chess.isStalemate(Color.Black))
     self.check(self.chess.isStalemate(Color.White))
-    self.chess = initChess([
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, WKing, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, BKnight,
-      0, 0, BKnight, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, BKing, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0
-    ], Color.Black)
+    self.chess = initChess("8/2k5/8/5n2/n7/8/4K3/8 b - - 0 0")
     self.check(self.chess.isStalemate(Color.Black))
     self.check(self.chess.isStalemate(Color.White))
-    self.chess = initChess([
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, WKing, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, BKnight,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, BKing, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0
-    ], Color.Black)
+    self.chess = initChess("8/2k5/8/8/n7/8/4K3/8 b - - 0 0")
     self.check(self.chess.isStalemate(Color.Black))
     self.check(self.chess.isStalemate(Color.White))
-    self.chess = initChess([
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, WKing, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, WKnight,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, BKing, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0
-    ], Color.Black)
+    self.chess = initChess("8/2k5/8/8/N7/8/4K3/8 b - - 0 0")
     self.check(self.chess.isStalemate(Color.Black))
     self.check(self.chess.isStalemate(Color.White))
-    self.chess = initChess([
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, WKing, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, BBishop,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, BKing, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0
-    ], Color.Black)
+    self.chess = initChess("8/2k5/8/8/b7/8/4K3/8 b - - 0 0")
     self.check(self.chess.isStalemate(Color.Black))
     self.check(self.chess.isStalemate(Color.White))
-    self.chess = initChess([
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, WKing, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, WBishop,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, BKing, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0
-    ], Color.Black)
+    self.chess = initChess("8/2k5/8/8/B7/8/4K3/8 b - - 0 0")
     self.check(self.chess.isStalemate(Color.Black))
     self.check(self.chess.isStalemate(Color.White))
 
   method testIsStalemateInsufficientMaterialFalse() =
-    self.chess = initChess([
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, WKing, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, BPawn,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, BKing, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0
-    ], Color.Black)
+    self.chess = initChess("8/2k5/8/8/p7/8/4K3/8 b - - 0 0")
     self.check(not self.chess.isStalemate(Color.Black))
     self.check(not self.chess.isStalemate(Color.White))
-    self.chess = initChess([
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, WKing, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, WPawn,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, BKing, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0
-    ], Color.Black)
+    self.chess = initChess("8/2k5/8/8/P7/8/4K3/8 b - - 0 0")
     self.check(not self.chess.isStalemate(Color.Black))
     self.check(not self.chess.isStalemate(Color.White))
-    self.chess = initChess([
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, WKing, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, BRook,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, BKing, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0
-    ], Color.Black)
+    self.chess = initChess("8/2k5/8/8/r7/8/4K3/8 b - - 0 0")
     self.check(not self.chess.isStalemate(Color.Black))
     self.check(not self.chess.isStalemate(Color.White))
-    self.chess = initChess([
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, WKing, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, WRook,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, BKing, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0
-    ], Color.Black)
+    self.chess = initChess("8/2k5/8/8/R7/8/4K3/8 b - - 0 0")
     self.check(not self.chess.isStalemate(Color.Black))
     self.check(not self.chess.isStalemate(Color.White))
-    self.chess = initChess([
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, WKing, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, WBishop, 0, 0, 0, 0, 0, BPawn,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, BKing, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0
-    ], Color.Black)
+    self.chess = initChess("8/2k5/8/8/p5B1/8/4K3/8 b - - 0 0")
     self.check(not self.chess.isStalemate(Color.Black))
     self.check(not self.chess.isStalemate(Color.White))
-    self.chess = initChess([
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, WKing, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, BBishop, 0, 0, 0, 0, WPawn,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, BKing, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0
-    ], Color.Black)
+    self.chess = initChess("8/2k5/8/8/P4b2/8/4K3/8 b - - 0 0")
     self.check(not self.chess.isStalemate(Color.Black))
     self.check(not self.chess.isStalemate(Color.White))
 
@@ -295,16 +160,7 @@ testSuite ChessTest of TestSuite:
     self.check(not self.chess.isDrawClaimable())
 
   method testIsDrawClaimableFiftyMoveRuleTrue() =
-    self.chess = initChess([
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, BRook,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      WBishop, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, WKing, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, WRook, 0,
-      0, 0, 0, BKing, 0, 0, 0, 0
-    ], Color.Black)
+    self.chess = initChess("4k3/1R6/8/5K2/7B/8/r7/8 b - - 0 0")
     self.chess.checkedMove(notationToMove("a2a5", Color.Black))
     self.chess.checkedMove(notationToMove("f5g6", Color.White))
     self.chess.checkedMove(notationToMove("a5e5", Color.Black))
@@ -408,16 +264,7 @@ testSuite ChessTest of TestSuite:
     self.check(self.chess.isDrawClaimable())
 
   method testIsDrawClaimableFiftyMoveRuleFalseNinetyFour() =
-    self.chess = initChess([
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, BRook,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      WBishop, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, WKing, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, WRook, 0,
-      0, 0, 0, BKing, 0, 0, 0, 0
-    ], Color.Black)
+    self.chess = initChess("4k3/1R6/8/5K2/7B/8/r7/8 b - - 0 0")
     self.chess.checkedMove(notationToMove("a2a5", Color.Black))
     self.chess.checkedMove(notationToMove("f5g6", Color.White))
     self.chess.checkedMove(notationToMove("a5e5", Color.Black))
@@ -521,16 +368,7 @@ testSuite ChessTest of TestSuite:
     self.check(self.chess.isDrawClaimable())
 
   method testIsDrawClaimableFiftyMoveRuleFalseCapture() =
-    self.chess = initChess([
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, BRook,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      WBishop, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, WKing, 0, 0, 0, 0, 0,
-      0, 0, BPawn, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, WRook, 0,
-      0, 0, 0, BKing, 0, 0, 0, 0
-    ], Color.Black)
+    self.chess = initChess("4k3/1R6/5p2/5K2/7B/8/r7/8 b - - 0 0")
     self.chess.checkedMove(notationToMove("a2a5", Color.Black))
     self.chess.checkedMove(notationToMove("f5g6", Color.White))
     self.chess.checkedMove(notationToMove("a5e5", Color.Black))
@@ -649,17 +487,7 @@ testSuite ChessTest of TestSuite:
 
   method testCheckedMovePawnSingleFalseIntoEnemyPiece() =
     var test: bool
-    let pos = initChess([
-      WRook, 0, 0, WKing, 0, 0, 0, WRook,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn,
-      BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      BRook, 0, 0, BKing, 0, 0, 0, BRook
-    ], Color.White)
-    self.chess = pos
+    self.chess = initChess("r3k2r/8/8/pppppppp/PPPPPPPP/8/8/R3K2R w - - 0 0")
     for file in "abcdefgh":
       test = self.chess.checkedMove(notationToMove($file & "4" & $file & "5", Color.White))
       self.check(not test)
@@ -668,17 +496,7 @@ testSuite ChessTest of TestSuite:
 
   method testCheckedMovePawnSingleFalseIntoOwnPiece() =
     var test: bool
-    let pos = initChess([
-      WRook, 0, 0, WKing, 0, 0, 0, WRook,
-      WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn,
-      WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn,
-      BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn,
-      BRook, 0, 0, BKing, 0, 0, 0, BRook
-    ], Color.White)
-    self.chess = pos
+    self.chess = initChess("r3k2r/pppppppp/pppppppp/8/8/PPPPPPPP/PPPPPPPP/R3K2R w - - 0 0")
     for file in "abcdefgh":
       test = self.chess.checkedMove(notationToMove($file & "2" & $file & "3", Color.White))
       self.check(not test)
@@ -696,17 +514,7 @@ testSuite ChessTest of TestSuite:
 
   method testCheckedMovePawnDoubleFalseAlreadyMoved() =
     var test: bool
-    let pos = initChess([
-      WRook, 0, 0, WKing, 0, 0, 0, WRook,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      BRook, 0, 0, BKing, 0, 0, 0, BRook
-    ], Color.White)
-    self.chess = pos
+    self.chess = initChess("r3k2r/8/pppppppp/8/8/PPPPPPPP/8/R3K2R w - - 0 0")
     for file in "abcdefgh":
       test = self.chess.checkedMove(notationToMove($file & "3" & $file & "5", Color.White))
       self.check(not test)
@@ -715,17 +523,7 @@ testSuite ChessTest of TestSuite:
 
   method testCheckedMovePawnDoubleFalseThroughEnemyPiece() =
     var test: bool
-    let pos = initChess([
-      WRook, 0, 0, WKing, 0, 0, 0, WRook,
-      WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn,
-      BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn,
-      BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn,
-      BRook, 0, 0, BKing, 0, 0, 0, BRook
-    ], Color.White)
-    self.chess = pos
+    self.chess = initChess("r3k2r/pppppppp/PPPPPPPP/8/8/pppppppp/PPPPPPPP/R3K2R w - - 0 0")
     for file in "abcdefgh":
       test = self.chess.checkedMove(notationToMove($file & "3" & $file & "5", Color.White))
       self.check(not test)
@@ -734,17 +532,7 @@ testSuite ChessTest of TestSuite:
 
   method testCheckedMovePawnDoubleFalseThroughOwnPiece() =
     var test: bool
-    let pos = initChess([
-      WRook, 0, 0, WKing, 0, 0, 0, WRook,
-      WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn,
-      WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn,
-      BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn,
-      BRook, 0, 0, BKing, 0, 0, 0, BRook
-    ], Color.White)
-    self.chess = pos
+    self.chess = initChess("r3k2r/pppppppp/pppppppp/8/8/PPPPPPPP/PPPPPPPP/R3K2R w - - 0 0")
     for file in "abcdefgh":
       test = self.chess.checkedMove(notationToMove($file & "3" & $file & "5", Color.White))
       self.check(not test)
@@ -753,17 +541,7 @@ testSuite ChessTest of TestSuite:
 
   method testCheckedMovePawnDoubleFalseIntoEnemyPiece() =
     var test: bool
-    let pos = initChess([
-      WRook, 0, 0, WKing, 0, 0, 0, WRook,
-      WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn,
-      WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn,
-      BRook, 0, 0, BKing, 0, 0, 0, BRook
-    ], Color.White)
-    self.chess = pos
+    self.chess = initChess("r3k2r/pppppppp/8/PPPPPPPP/pppppppp/8/PPPPPPPP/R3K2R w - - 0 0")
     for file in "abcdefgh":
       test = self.chess.checkedMove(notationToMove($file & "3" & $file & "5", Color.White))
       self.check(not test)
@@ -772,17 +550,7 @@ testSuite ChessTest of TestSuite:
 
   method testCheckedMovePawnDoubleFalseIntoOwnPiece() =
     var test: bool
-    let pos = initChess([
-      WRook, 0, 0, WKing, 0, 0, 0, WRook,
-      WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn,
-      BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn,
-      BRook, 0, 0, BKing, 0, 0, 0, BRook
-    ], Color.White)
-    self.chess = pos
+    self.chess = initChess("r3k2r/pppppppp/8/pppppppp/PPPPPPPP/8/PPPPPPPP/R3K2R w - - 0 0")
     for file in "abcdefgh":
       test = self.chess.checkedMove(notationToMove($file & "3" & $file & "5", Color.White))
       self.check(not test)
@@ -791,16 +559,7 @@ testSuite ChessTest of TestSuite:
 
   method testCheckedMovePawnCaptureTrueWhite() =
     var test: bool
-    let pos = initChess([
-      WRook, 0, 0, WKing, 0, 0, 0, WRook,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn,
-      BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      BRook, 0, 0, BKing, 0, 0, 0, BRook
-    ], Color.White)
+    let pos = initChess("r3k2r/8/8/pppppppp/PPPPPPPP/8/8/R3K2R w - - 0 0")
     var str: string
     str = "abcdefgh"
     for ind, file in str:
@@ -819,16 +578,7 @@ testSuite ChessTest of TestSuite:
 
   method testCheckedMovePawnCaptureTrueBlack() =
     var test: bool
-    let pos = initChess([
-      WRook, 0, 0, WKing, 0, 0, 0, WRook,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn,
-      BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      BRook, 0, 0, BKing, 0, 0, 0, BRook
-    ], Color.Black)
+    let pos = initChess("r3k2r/8/8/pppppppp/PPPPPPPP/8/8/R3K2R b - - 0 0")
     var str: string
     str = "abcdefgh"
     for ind, file in str:
@@ -847,16 +597,7 @@ testSuite ChessTest of TestSuite:
 
   method testCheckedMovePawnCaptureFalseWhite() =
     var test: bool
-    let pos = initChess([
-      WRook, 0, 0, WKing, 0, 0, 0, WRook,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      BRook, 0, 0, BKing, 0, 0, 0, BRook
-    ], Color.White)
+    let pos = initChess("r3k2r/8/8/8/PPPPPPPP/8/8/R3K2R w - - 0 0")
     var str: string
     str = "abcdefgh"
     for ind, file in str:
@@ -875,16 +616,7 @@ testSuite ChessTest of TestSuite:
 
   method testCheckedMovePawnCaptureFalseBlack() =
     var test: bool
-    let pos = initChess([
-      WRook, 0, 0, WKing, 0, 0, 0, WRook,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      BRook, 0, 0, BKing, 0, 0, 0, BRook
-    ], Color.Black)
+    let pos = initChess("r3k2r/8/8/pppppppp/8/8/8/R3K2R b - - 0 0")
     var str: string
     str = "abcdefgh"
     for ind, file in str:
@@ -903,16 +635,7 @@ testSuite ChessTest of TestSuite:
 
   method testCheckedMovePawnEnPassantTrueWhite() =
     var test: bool
-    let pos = initChess([
-      WRook, 0, 0, WKing, 0, 0, 0, WRook,
-      WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn,
-      BRook, 0, 0, BKing, 0, 0, 0, BRook
-    ], Color.White)
+    let pos = initChess("r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w - - 0 0")
     var str: string
     str = "abcdefgh"
     for ind, file in str:
@@ -953,16 +676,7 @@ testSuite ChessTest of TestSuite:
 
   method testCheckedMovePawnEnPassantTrueBlack() =
     var test: bool
-    let pos = initChess([
-      WRook, 0, 0, WKing, 0, 0, 0, WRook,
-      WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn,
-      BRook, 0, 0, BKing, 0, 0, 0, BRook
-    ], Color.Black)
+    let pos = initChess("r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R b - - 0 0")
     var str: string
     str = "abcdefgh"
     for ind, file in str:
@@ -1003,16 +717,7 @@ testSuite ChessTest of TestSuite:
 
   method testCheckedMovePawnEnPassantFalseWhite() =
     var test: bool
-    let pos = initChess([
-      WRook, 0, 0, WKing, 0, 0, 0, WRook,
-      WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn,
-      BRook, 0, 0, BKing, 0, 0, 0, BRook
-    ], Color.White)
+    let pos = initChess("r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w - - 0 0")
     var str: string
     str = "abcdefgh"
     for ind, file in str:
@@ -1053,16 +758,7 @@ testSuite ChessTest of TestSuite:
 
   method testCheckedMovePawnEnPassantFalseBlack() =
     var test: bool
-    let pos = initChess([
-      WRook, 0, 0, WKing, 0, 0, 0, WRook,
-      WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn,
-      BRook, 0, 0, BKing, 0, 0, 0, BRook
-    ], Color.Black)
+    let pos = initChess("r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R b - - 0 0")
     var str: string
     str = "abcdefgh"
     for ind, file in str:
@@ -1104,16 +800,7 @@ testSuite ChessTest of TestSuite:
   ## Tests for King moves
   method testCheckedMoveKingCastleTrueWhite() =
     var test: bool
-    let pos = initChess([
-      WRook, 0, 0, WKing, 0, 0, 0, WRook,
-      WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn,
-      BRook, 0, 0, BKing, 0, 0, 0, BRook
-    ], Color.White)
+    let pos = initChess("r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 0")
     self.chess = pos
     test = self.chess.checkedMove(notationToMove("e1c1", Color.White))
     self.check(test)
@@ -1123,16 +810,7 @@ testSuite ChessTest of TestSuite:
 
   method testCheckedMoveKingCastleTrueBlack() =
     var test: bool
-    let pos = initChess([
-      WRook, 0, 0, WKing, 0, 0, 0, WRook,
-      WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn,
-      BRook, 0, 0, BKing, 0, 0, 0, BRook
-    ], Color.Black)
+    let pos = initChess("r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R b KQkq - 0 0")
     self.chess = pos
     test = self.chess.checkedMove(notationToMove("e8c8", Color.Black))
     self.check(test)
@@ -1142,16 +820,10 @@ testSuite ChessTest of TestSuite:
 
   method testCheckedMoveKingCastleFalseAlreadyMovedKing() =
     var test: bool
-    let pos = initChess([
-      WRook, 0, 0, 0, WKing, 0, 0, WRook,
-      WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn,
-      BRook, 0, 0, 0, BKing, 0, 0, BRook
-    ], Color.White)
+    var pos = initChess("r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R b KQkq - 0 0")
+    pos.checkedMove(notationToMove("e8d8", Color.Black))
+    pos.checkedMove(notationToMove("e1d1", Color.White))
+    self.chess = pos
     self.chess.checkedMove(notationToMove("d1e1", Color.White))
     self.chess.checkedMove(notationToMove("d8e8", Color.White))
     self.chess = pos
@@ -1166,16 +838,11 @@ testSuite ChessTest of TestSuite:
 
   method testCheckedMoveKingCastleFalseAlreadyMovedRook() =
     var test: bool
-    let pos = initChess([
-      0, WRook, 0, WKing, 0, 0, WRook, 0,
-      WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn,
-      0, BRook, 0, BKing, 0, 0, BRook, 0
-    ], Color.White)
+    var pos = initChess("r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 0")
+    pos.checkedMove(notationToMove("a1b1", Color.White))
+    pos.checkedMove(notationToMove("a8b8", Color.Black))
+    pos.checkedMove(notationToMove("h1g1", Color.White))
+    pos.checkedMove(notationToMove("h8g8", Color.Black))
     self.chess = pos
     self.chess.checkedMove(notationToMove("b1a1", Color.White))
     self.chess.checkedMove(notationToMove("b8a8", Color.Black))
@@ -1192,148 +859,85 @@ testSuite ChessTest of TestSuite:
 
   method testCheckedMoveKingCastleFalseThroughCheck() =
     var test: bool
-    let pos = initChess([
-      WRook, 0, 0, WKing, 0, 0, 0, WRook,
-      WPawn, WPawn, BRook, WPawn, BRook, WPawn, WPawn, WPawn,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      BPawn, BPawn, WRook, BPawn, WRook, BPawn, BPawn, BPawn,
-      BRook, 0, 0, BKing, 0, 0, 0, BRook
-    ], Color.White)
-    self.chess = pos
+    self.chess = initChess("r3k2r/pppRpRpp/8/8/8/8/PPPrPrPP/R3K2R w KQkq - 0 0")
     test = self.chess.checkedMove(notationToMove("e1c1", Color.White))
     self.check(not test)
-    test = self.chess.checkedMove(notationToMove("e8c8", Color.Black))
-    self.check(not test)
     self.chess.checkedMove(notationToMove("e1g1", Color.White))
+    self.check(not test)
+    self.chess = initChess("r3k2r/pppRpRpp/8/8/8/8/PPPrPrPP/R3K2R b KQkq - 0 0")
+    test = self.chess.checkedMove(notationToMove("e8c8", Color.Black))
     self.check(not test)
     test = self.chess.checkedMove(notationToMove("e8g8", Color.Black))
     self.check(not test)
 
   method testCheckedMoveKingCastleFalseIntoCheck() =
     var test: bool
-    let pos = initChess([
-      WRook, 0, 0, WKing, 0, 0, 0, WRook,
-      WPawn, BRook, WPawn, WPawn, WPawn, BRook, WPawn, WPawn,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      BPawn, WRook, BPawn, BPawn, BPawn, WRook, BPawn, BPawn,
-      BRook, 0, 0, BKing, 0, 0, 0, BRook
-    ], Color.White)
-    self.chess = pos
+    self.chess = initChess("r3k2r/ppRpppRp/8/8/8/8/PPrPPPrP/R3K2R w KQkq - 0 0")
     test = self.chess.checkedMove(notationToMove("e1c1", Color.White))
-    self.check(not test)
-    test = self.chess.checkedMove(notationToMove("e8c8", Color.Black))
     self.check(not test)
     self.chess.checkedMove(notationToMove("e1g1", Color.White))
     self.check(not test)
+    self.chess = initChess("r3k2r/ppRpppRp/8/8/8/8/PPrPPPrP/R3K2R b KQkq - 0 0")
     test = self.chess.checkedMove(notationToMove("e8g8", Color.Black))
+    self.check(not test)
+    test = self.chess.checkedMove(notationToMove("e8c8", Color.Black))
     self.check(not test)
 
   method testCheckedMoveKingCastleFalseThroughOwnPiece() =
     var test: bool
-    let pos = initChess([
-      WRook, 0, WBishop, WKing, WBishop, 0, 0, WRook,
-      WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn,
-      BRook, 0, BBishop, BKing, BBishop, 0, 0, BRook
-    ], Color.White)
-    self.chess = pos
+    self.chess = initChess("r2bkb1r/pppppppp/8/8/8/8/PPPPPPPP/R2BKB1R w KQkq - 0 0")
     test = self.chess.checkedMove(notationToMove("e1c1", Color.White))
     self.check(not test)
-    test = self.chess.checkedMove(notationToMove("e8c8", Color.Black))
-    self.check(not test)
     self.chess.checkedMove(notationToMove("e1g1", Color.White))
+    self.check(not test)
+    self.chess = initChess("r2bkb1r/pppppppp/8/8/8/8/PPPPPPPP/R2BKB1R b KQkq - 0 0")
+    test = self.chess.checkedMove(notationToMove("e8c8", Color.Black))
     self.check(not test)
     test = self.chess.checkedMove(notationToMove("e8g8", Color.Black))
     self.check(not test)
 
   method testCheckedMoveKingCastleFalseThroughEnemyPiece() =
     var test: bool
-    let pos = initChess([
-      WRook, 0, BBishop, WKing, BBishop, 0, 0, WRook,
-      WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn,
-      BRook, 0, WBishop, BKing, WBishop, 0, 0, BRook
-    ], Color.White)
-    self.chess = pos
+    self.chess = initChess("r2BkB1r/pppppppp/8/8/8/8/PPPPPPPP/R2bKb1R w KQkq - 0 0")
     test = self.chess.checkedMove(notationToMove("e1c1", Color.White))
     self.check(not test)
-    test = self.chess.checkedMove(notationToMove("e8c8", Color.Black))
-    self.check(not test)
     self.chess.checkedMove(notationToMove("e1g1", Color.White))
+    self.check(not test)
+    self.chess = initChess("r2BkB1r/pppppppp/8/8/8/8/PPPPPPPP/R2bKb1R b KQkq - 0 0")
+    test = self.chess.checkedMove(notationToMove("e8c8", Color.Black))
     self.check(not test)
     test = self.chess.checkedMove(notationToMove("e8g8", Color.Black))
     self.check(not test)
 
   method testCheckedMoveKingCastleFalseIntoOwnPiece() =
     var test: bool
-    let pos = initChess([
-      WRook, WBishop, 0, WKing, 0, WBishop, 0, WRook,
-      WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn,
-      BRook, BBishop, 0, BKing, 0, BBishop, 0, BRook
-    ], Color.White)
-    self.chess = pos
+    self.chess = initChess("r1b1k1br/pppppppp/8/8/8/8/PPPPPPPP/R1b1K1bR w KQkq - 0 0")
     test = self.chess.checkedMove(notationToMove("e1c1", Color.White))
     self.check(not test)
-    test = self.chess.checkedMove(notationToMove("e8c8", Color.Black))
-    self.check(not test)
     self.chess.checkedMove(notationToMove("e1g1", Color.White))
+    self.check(not test)
+    self.chess = initChess("r1b1k1br/pppppppp/8/8/8/8/PPPPPPPP/R1b1K1bR b KQkq - 0 0")
+    test = self.chess.checkedMove(notationToMove("e8c8", Color.Black))
     self.check(not test)
     test = self.chess.checkedMove(notationToMove("e8g8", Color.Black))
     self.check(not test)
 
   method testCheckedMoveKingCastleFalseIntoEnemyPiece() =
     var test: bool
-    let pos = initChess([
-      WRook, BBishop, 0, WKing, 0, BBishop, 0, WRook,
-      WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn, WPawn,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn, BPawn,
-      BRook, WBishop, 0, BKing, 0, WBishop, 0, BRook
-    ], Color.White)
-    self.chess = pos
+    self.chess = initChess("r1B1k1Br/pppppppp/8/8/8/8/PPPPPPPP/R1B1K1BR w KQkq - 0 0")
     test = self.chess.checkedMove(notationToMove("e1c1", Color.White))
     self.check(not test)
-    test = self.chess.checkedMove(notationToMove("e8c8", Color.Black))
-    self.check(not test)
     self.chess.checkedMove(notationToMove("e1g1", Color.White))
+    self.check(not test)
+    self.chess = initChess("r1B1k1Br/pppppppp/8/8/8/8/PPPPPPPP/R1B1K1BR b KQkq - 0 0")
+    test = self.chess.checkedMove(notationToMove("e8c8", Color.Black))
     self.check(not test)
     test = self.chess.checkedMove(notationToMove("e8g8", Color.Black))
     self.check(not test)
 
   method testCheckedMoveKingWhite() =
     var test: bool
-    let pos = initChess([
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, WEnPassant, 0, 0, 0,
-      0, 0, BPawn, WKing, WPawn, 0, 0, 0,
-      0, 0, BEnPassant, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-    ], Color.White)
+    let pos = initChess("8/8/8/3PKp2/8/8/8/8 w - f6 0 0")
     let start = "e5"
     let legalMoves = ["f4", "d4", "f5", "f6", "e6", "d6"]
     let str = "abcdefgh"
@@ -1350,16 +954,7 @@ testSuite ChessTest of TestSuite:
 
   method testCheckedMoveKingBlack() =
     var test: bool
-    let pos = initChess([
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, BEnPassant, 0, 0, 0,
-      0, 0, WPawn, BKing, BPawn, 0, 0, 0,
-      0, 0, WEnPassant, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-    ], Color.Black)
+    let pos = initChess("8/8/8/3pkP2/8/8/8/8 b - f6 0 0")
     let start = "e5"
     let legalMoves = ["f4", "d4", "f5", "f6", "e4", "d6"]
     let str = "abcdefgh"
@@ -1377,16 +972,7 @@ testSuite ChessTest of TestSuite:
   ## Tests for Bishop moves
   method testCheckedMoveBishopWhite() =
     var test: bool
-    let pos = initChess([
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, BEnPassant, 0, WPawn, 0, 0,
-      0, 0, 0, 0, WBishop, 0, 0, 0,
-      0, 0, 0, BPawn, 0, WEnPassant, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-    ], Color.White)
+    let pos = initChess("8/8/4p3/3B4/2P5/8/8/8 w - c6 0 0")
     let start = "d5"
     let legalMoves = ["e4", "f3", "g2", "h1", "c6", "b7", "a8", "e6"]
     let str = "abcdefgh"
@@ -1403,16 +989,7 @@ testSuite ChessTest of TestSuite:
 
   method testCheckedMoveBishopBlack() =
     var test: bool
-    let pos = initChess([
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, WEnPassant, 0, BPawn, 0, 0,
-      0, 0, 0, 0, BBishop, 0, 0, 0,
-      0, 0, 0, WPawn, 0, BEnPassant, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-    ], Color.Black)
+    let pos = initChess("8/8/4P3/3b4/2p5/8/8/8 b - c6 0 0")
     let start = "d5"
     let legalMoves = ["e4", "f3", "g2", "h1", "c6", "b7", "a8", "e6"]
     let str = "abcdefgh"
@@ -1430,16 +1007,7 @@ testSuite ChessTest of TestSuite:
   ## Tests for Knight moves
   method testCheckedMoveKnightWhite() =
     var test: bool
-    let pos = initChess([
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, WEnPassant, 0, WPawn, 0, 0,
-      0, 0, BEnPassant, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, WKnight, 0, 0, 0,
-      0, 0, BPawn, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-    ], Color.White)
+    let pos = initChess("8/8/5p2/3N4/8/2P5/8/8 w - f4 0 0")
     let start = "d5"
     let legalMoves = ["f6", "f4", "e3", "b4", "b6", "c7", "e7"]
     let str = "abcdefgh"
@@ -1456,16 +1024,7 @@ testSuite ChessTest of TestSuite:
 
   method testCheckedMoveKnightBlack() =
     var test: bool
-    let pos = initChess([
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, BEnPassant, 0, BPawn, 0, 0,
-      0, 0, WEnPassant, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, BKnight, 0, 0, 0,
-      0, 0, WPawn, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-    ], Color.Black)
+    let pos = initChess("8/8/5P2/3n4/8/2p5/8/8 b - f4 0 0")
     let start = "d5"
     let legalMoves = ["f6", "f4", "e3", "b4", "b6", "c7", "e7"]
     let str = "abcdefgh"
@@ -1483,16 +1042,7 @@ testSuite ChessTest of TestSuite:
   ## Tests for Rook moves
   method testCheckedMoveRookWhite() =
     var test: bool
-    let pos = initChess([
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, WPawn, 0, 0, 0,
-      0, 0, 0, BPawn, WRook, WEnPassant, 0, 0,
-      0, 0, 0, 0, BEnPassant, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-    ], Color.White)
+    let pos = initChess("8/8/8/3Rp3/3P4/8/8/8 w - c6 0 0")
     let start = "d5"
     let legalMoves = ["e5", "d6", "d7", "d8", "c5", "b5", "a5"]
     let str = "abcdefgh"
@@ -1509,16 +1059,7 @@ testSuite ChessTest of TestSuite:
 
   method testCheckedMoveRookBlack() =
     var test: bool
-    let pos = initChess([
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, BPawn, 0, 0, 0,
-      0, 0, 0, WPawn, BRook, BEnPassant, 0, 0,
-      0, 0, 0, 0, WEnPassant, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-    ], Color.Black)
+    let pos = initChess("8/8/8/3rP3/3p4/8/8/8 b - c6 0 0")
     let start = "d5"
     let legalMoves = ["e5", "d6", "d7", "d8", "c5", "b5", "a5"]
     let str = "abcdefgh"
@@ -1536,16 +1077,7 @@ testSuite ChessTest of TestSuite:
   ## Tests for Queen moves
   method testCheckedMoveQueenWhite() =
     var test: bool
-    let pos = initChess([
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, WPawn, 0, 0, 0,
-      0, 0, 0, BPawn, WQueen, WEnPassant, 0, 0,
-      0, 0, 0, 0, BEnPassant, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-    ], Color.White)
+    let pos = initChess("8/8/8/3Qp3/3P4/8/8/8 w - c6 0 0")
     let start = "d5"
     let legalMoves = ["e5", "d6", "d7", "d8", "c5", "b5", "a5", "h1", "g2",
         "f3", "e4", "c4", "b3", "a2", "g8", "f7", "e6", "c6", "b7", "a8"]
@@ -1563,16 +1095,7 @@ testSuite ChessTest of TestSuite:
 
   method testCheckedMoveQueenBlack() =
     var test: bool
-    let pos = initChess([
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, BPawn, 0, 0, 0,
-      0, 0, 0, WPawn, BQueen, BEnPassant, 0, 0,
-      0, 0, 0, 0, WEnPassant, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0,
-    ], Color.Black)
+    let pos = initChess("8/8/8/3qP3/3p4/8/8/8 b - c6 0 0")
     let start = "d5"
     let legalMoves = ["e5", "d6", "d7", "d8", "c5", "b5", "a5", "h1", "g2",
         "f3", "e4", "c4", "b3", "a2", "g8", "f7", "e6", "c6", "b7", "a8"]

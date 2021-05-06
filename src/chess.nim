@@ -1,12 +1,15 @@
+import algorithm
+import sequtils
+import strutils
+import sugar
 import tables
-from strutils import parseInt
 
 type
   Color* = enum
     ## `Color` describes the possible color of players.
     Black = -1,
     White = 1
-  Board = array[0..119, int] ## \
+  Board = array[120, int] ## \
     ## `Board` saves the position of the chess pieces.
   CastleRights = tuple
     ## `CastleRights` contains the rights to castling for each player.
@@ -41,6 +44,8 @@ type
 const
   Block = 999                                           ## \
     ## `Block` is the value assigned to empty blocked fields in a board.
+  Empty = 0                                             ## \
+    ## `Empty` is the value assigned to empty fields on a board.
   WPawn* = 1
     ## `WPawn` is the value assigned to a square in a board with a white pawn.
   WKnight* = 2                                          ## \
@@ -226,7 +231,7 @@ proc initBoard(): Board =
     Block, Block, Block, Block, Block, Block, Block, Block, Block, Block]
   return board
 
-proc initBoard(board: array[0..63, int]): Board =
+proc initBoard(board: array[64, int]): Board =
   ## Create and return a board with pieces in position of choice, described in
   ## `board`.
   let board = [
@@ -255,11 +260,10 @@ proc initBoard(board: array[0..63, int]): Board =
 proc initChess*(): Chess =
   ## Create and return a Chess object.
   let chess = Chess(board: initBoard(),
-      to_move: Color.White, previousBoard: @[], previousCastleRights: @[],
-          fiftyMoveCounter: 0, castleRights: (true, true, true, true))
+      to_move: Color.White, castleRights: (true, true, true, true))
   return chess
 
-proc initChess(board: array[0..63, int], color: Color): Chess =
+proc initChess(board: array[64, int], color: Color): Chess =
   ## Create and return a Chess object based on a position of choice.
   ## `board` describes the pieces, `color` the color that is about to move.
   let board = initBoard(board)
@@ -281,6 +285,49 @@ proc initChess(board: array[0..63, int], color: Color): Chess =
   let chess = Chess(board: board,
       to_move: color, castleRights: (wk, wq, bk, bq))
   return chess
+
+proc initChess*(fen: string): Chess =
+  ## Create and return a Chess object from `fen`.
+  var revPieceChar = toSeq(PieceChar.pairs).map(y => (y[1], y[0])).toTable
+  revPieceChar[" "] = Empty
+  var fenArr = fen.split(" ")
+  var squares: array[64, int]
+  var tmp: seq[int]
+  var squaresInd: int
+  for i, subc in fenArr[0].reversed():
+    if subc == '/':
+      continue
+    if subc.isDigit():
+      for j in 1..parseInt($subc):
+        squares[squaresInd] = revPieceChar[" "]
+        squaresInd += 1
+        continue
+    else:
+      squares[squaresInd] = revPieceChar[$subc]
+      squaresInd += 1
+  var board = initBoard(squares)
+  var toMove: Color
+  if fenArr[1] == "w":
+    toMove = Color.White
+  else:
+    toMove = Color.Black
+  var castleRights: CastleRights
+  if fenArr[2].contains("K"):
+    castleRights.wk = true
+  if fenArr[2].contains("Q"):
+    castleRights.wq = true
+  if fenArr[2].contains("k"):
+    castleRights.bk = true
+  if fenArr[2].contains("q"):
+    castleRights.bq = true
+  if fenArr[3] != "-":
+    if toMove == Color.White:
+      board[fieldToInd(fenArr[3])] = BEnPassant
+    else:
+      board[fieldToInd(fenArr[3])] = WEnPassant
+  var fiftyMoveCounter = parseInt(fenArr[4])
+  return Chess(board: board, toMove: toMove, castleRights: castleRights,
+      fiftyMoveCounter: fiftyMoveCounter)
 
 proc echoBoard*(chess: Chess, color: Color) =
   ## Prints out the given `board` with its pieces as characters and line
@@ -543,8 +590,7 @@ proc genPawnPromotion(move: Move, color: Color): seq[Move] =
   var promotions = newSeq[Move]()
   let start = move.start
   let dest = move.dest
-  if (fieldToInd("h8") <= dest and dest <= fieldToInd("a8")) or
-    (fieldToInd("h1") <= dest and dest <= fieldToInd("a1")):
+  if (fieldToInd("h8") >= dest) or (fieldToInd("a8") >= dest):
     for piece in WKnight..WQueen:
       promotions.add(getMove(start, dest, piece, color))
   return promotions

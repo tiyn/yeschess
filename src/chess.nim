@@ -585,12 +585,15 @@ proc moveLeadsToCheck(chess: Chess, start: int, dest: int,
   check.uncheckedMove(start, dest)
   return check.isInCheck(color)
 
-proc genPawnPromotion(move: Move, color: Color): seq[Move] =
-  ## Generate all possible promotions of a `move` by `color`.
+proc genPawnPromotion(board: Board, move: Move, color: Color): seq[Move] =
+  ## Generate all possible promotions on a `board` of a `move` by `color`.
   var promotions = newSeq[Move]()
   let start = move.start
   let dest = move.dest
-  if (fieldToInd("h8") >= dest) or (fieldToInd("a8") >= dest):
+  if board[start] != WPawn * ord(color):
+    return @[]
+  if (fieldToInd("h8") <= dest and fieldToInd("a8") >= dest and color == Color.White) or
+    (fieldToInd("h1") <= dest and fieldToInd("a1") >= dest and color == Color.Black):
     for piece in WKnight..WQueen:
       promotions.add(getMove(start, dest, piece, color))
   return promotions
@@ -616,7 +619,7 @@ proc genLegalPawnMoves(chess: Chess, field: int, color: Color): seq[Move] =
   var moves = chess.genPawnDests(field, color)
   for dest in moves:
     if not chess.moveLeadsToCheck(field, dest, color):
-      var promotions = genPawnPromotion(getMove(field, dest, color), color)
+      var promotions = chess.board.genPawnPromotion(getMove(field, dest, color), color)
       if promotions != @[]:
         res.add(promotions)
       else:

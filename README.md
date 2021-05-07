@@ -30,6 +30,11 @@ Documentation is written into the code via DocGen.
 For this reason it is not saved in this repository.
 To extract it into html run `nim doc --project --index:on --outdir:htmldocs game.nim`
 
+### Moves
+
+Moves are read from the commandline as [pure coordinate notation](https://www.chessprogramming.org/Algebraic_Chess_Notation#Pure_coordinate_notation).
+The inner program will convert this notation to a move-tuple.
+
 ### Board Representation
 
 Due to easier off the board checking a

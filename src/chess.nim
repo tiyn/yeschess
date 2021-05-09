@@ -23,8 +23,10 @@ type
     toMove*: Color
     previousBoard: seq[Board]
     previousCastleRights: seq[CastleRights]
-    fiftyMoveCounter: int
+    halfMoveClock: int
+    fullMoveCounter*: int
     castleRights: CastleRights
+    enPassantSquare: int
   Move* = object
     ## `Move` stores all important information for a move.
     start: int
@@ -61,9 +63,6 @@ const
     ## queen.
   WKing* = 6                                            ## \
     ## `WKing` is the value assigned to a square in a board with a white king.
-  WEnPassant = 7                                        ## \
-    ## `WEnPassant` is assigned to a square in a board with an invisible white
-    ## en passant pawn.
   BPawn* = -WPawn                                       ## \
     ## `BPawn` is the value assigned to a square in a board with a black pawn.
   BKnight* = -WKnight                                   ## \
@@ -78,9 +77,6 @@ const
     ## `BQueen` is the value assigned to a square in a board with a black queen.
   BKing* = -WKing                                       ## \
     ## `BKing` is the value assigned to a square in a board with a black king.
-  BEnPassant = -WEnPassant                              ## \
-    ## `BEnPassant` is assigned to a square in a board with an invisible black
-    ## en passant pawn.
   N = 10 ## `N` describes a move a field up the board from whites perspective.
   S = -N ## `S` describes a move a field down the board from whites perspective.
   E = 1 ## `E` describes a move a field to the right from whites perspective.
@@ -124,14 +120,12 @@ let
     WRook: "R",
     WQueen: "Q",
     WKing: "K",
-    WEnPassant: " ",
     BPawn: "p",
     BKnight: "n",
     BBishop: "b",
     BRook: "r",
     BQueen: "q",
     BKing: "k",
-    BEnPassant: " ",
   }.newTable ## \
     ## `PieceChar` describes the representation for the pieceIDs for the cli.
   FileChar = {
@@ -260,39 +254,14 @@ proc initBoard(board: array[64, int]): Board =
 proc initChess*(): Chess =
   ## Create and return a Chess object.
   let chess = Chess(board: initBoard(),
-      to_move: Color.White, castleRights: (true, true, true, true))
-  return chess
-
-proc initChess(board: array[64, int], color: Color): Chess =
-  ## Create and return a Chess object based on a position of choice.
-  ## `board` describes the pieces, `color` the color that is about to move.
-  let board = initBoard(board)
-  let compare = initBoard()
-  var wk: bool
-  var wq: bool
-  var bk: bool
-  var bq: bool
-  if (board[fieldToInd("e1")] == compare[fieldToInd("e1")]):
-    if (board[fieldToInd("a1")] == compare[fieldToInd("a1")]):
-      wq = true
-    if (board[fieldToInd("h1")] == compare[fieldToInd("h1")]):
-      wk = true
-  if (board[fieldToInd("e8")] == compare[fieldToInd("e8")]):
-    if (board[fieldToInd("a8")] == compare[fieldToInd("a8")]):
-      bq = true
-    if (board[fieldToInd("h8")] == compare[fieldToInd("h8")]):
-      bk = true
-  let chess = Chess(board: board,
-      to_move: color, castleRights: (wk, wq, bk, bq))
+      to_move: Color.White, castleRights: (true, true, true, true), fullMoveCounter: 1, enPassantSquare: -1)
   return chess
 
 proc initChess*(fen: string): Chess =
   ## Create and return a Chess object from `fen`.
   var revPieceChar = toSeq(PieceChar.pairs).map(y => (y[1], y[0])).toTable
-  revPieceChar[" "] = Empty
   var fenArr = fen.split(" ")
   var squares: array[64, int]
-  var tmp: seq[int]
   var squaresInd: int
   for i, subc in fenArr[0].reversed():
     if subc == '/':
@@ -320,14 +289,60 @@ proc initChess*(fen: string): Chess =
     castleRights.bk = true
   if fenArr[2].contains("q"):
     castleRights.bq = true
+  var enPassantSquare = -1
   if fenArr[3] != "-":
-    if toMove == Color.White:
-      board[fieldToInd(fenArr[3])] = BEnPassant
-    else:
-      board[fieldToInd(fenArr[3])] = WEnPassant
-  var fiftyMoveCounter = parseInt(fenArr[4])
+    enPassantSquare = fieldToInd(fenArr[3])
+  let halfMoveClock = parseInt(fenArr[4])
+  let fullMoveCounter = parseInt(fenArr[5])
   return Chess(board: board, toMove: toMove, castleRights: castleRights,
-      fiftyMoveCounter: fiftyMoveCounter)
+    halfMoveClock: halfMoveClock, fullMoveCounter: fullMoveCounter, enPassantSquare: enPassantSquare)
+
+proc convertToFen*(chess: Chess): string =
+  ## Build and return a fen string from a given `chess` object.
+  var pieces: string
+  var fen: string
+  var spaceOcc: int
+  var fileCounter = 0
+  for piece in chess.board.reversed:
+    if not (piece == Block):
+      if fileCounter == 8:
+        if spaceOcc != 0:
+          pieces &= $spaceOcc
+          spaceOcc = 0
+        pieces &= "/"
+        fileCounter = 0
+      if PieceChar[piece] == " ":
+        spaceOcc += 1
+      else:
+        if spaceOcc != 0:
+          pieces &= $spaceOcc
+          spaceOcc = 0
+        pieces &= PieceChar[piece]
+      fileCounter += 1
+  fen &= pieces & " "
+  if chess.toMove == Color.White:
+    fen &= "w "
+  else:
+    fen &= "b "
+  var castleR: string
+  if chess.castleRights.wk:
+    castleR &= "K"
+  if chess.castleRights.wq:
+    castleR &= "Q"
+  if chess.castleRights.bk:
+    castleR &= "k"
+  if chess.castleRights.bq:
+    castleR &= "q"
+  if castleR.isEmptyOrWhitespace:
+    castleR = "-"
+  fen &= castleR & " "
+  if chess.enPassantSquare != -1:
+    fen &= indToField(chess.enPassantSquare) & " "
+  else:
+    fen &= "- "
+  fen &= $chess.halfMoveClock & " " & $chess.fullMoveCounter
+  return fen
+
 
 proc echoBoard*(chess: Chess, color: Color) =
   ## Prints out the given `board` with its pieces as characters and line
@@ -363,10 +378,12 @@ proc genPawnAttackDests(chess: Chess, field: int, color: Color): seq[int] =
   var target: int
   for attacks in Pawn_Moves_White_Attack:
     dest = field + (attacks * ord(color))
-    if (not dest in chess.board.low..chess.board.high):
+    if dest == chess.enPassantSquare:
+      res.add(dest)
+    if not dest in chess.board.low..chess.board.high:
       continue
     target = chess.board[dest]
-    if (target == Block or ord(color) * target >= 0):
+    if target == Block or ord(color) * target >= 0:
       continue
     res.add(dest)
   return res
@@ -407,7 +424,7 @@ proc genPawnDests(chess: Chess, field: int, color: Color): seq[int] =
     if (not dest in chess.board.low..chess.board.high):
       continue
     target = chess.board[dest]
-    if (target != 0 and target != ord(color) * WEnPassant):
+    if (target != 0 and dest != chess.enPassantSquare):
       continue
     res.add(dest)
   res.add(chess.genPawnAttackDests(field, color))
@@ -428,7 +445,7 @@ proc genKnightDests(chess: Chess, field: int, color: Color): seq[int] =
     if (not dest in chess.board.low..chess.board.high):
       continue
     target = chess.board[dest]
-    if (target == Block or (ord(color) * target > 0 and ord(color) * target != WEnPassant)):
+    if (target == Block or (ord(color) * target > 0)):
       continue
     res.add(dest)
   return res
@@ -448,10 +465,9 @@ proc genSlidePieceDests(chess: Chess, field: int, color: Color, moves: seq[
     if (not dest in chess.board.low..chess.board.high):
       continue
     target = chess.board[dest]
-    while (target != Block and (ord(color) * target <= 0) or abs(target) ==
-        WEnPassant):
+    while (target != Block and (ord(color) * target <= 0)):
       res.add(dest)
-      if (ord(color) * target < 0 and ord(color) * target > BEnPassant):
+      if (ord(color) * target < 0):
         break
       dest = dest + move
       target = chess.board[dest]
@@ -514,7 +530,7 @@ proc genKingDests(chess: Chess, field: int, color: Color): seq[int] =
     if (not dest in chess.board.low..chess.board.high):
       continue
     target = chess.board[dest]
-    if (target == Block or (ord(color) * target > 0 and ord(color) * target != WEnPassant)):
+    if (target == Block or (ord(color) * target > 0)):
       continue
     res.add(dest)
   res.add(chess.genKingCastleDest(field, color))
@@ -732,12 +748,6 @@ proc castling(chess: var Chess, kstart: int, dest_kingside: bool,
     return true
   return false
 
-proc removeEnPassant(board: var Board, color: Color): void =
-  ## Removes every en passant of given `color` from the `board`.
-  for field in board.low..board.high:
-    if board[field] == ord(color) * WEnPassant:
-      board[field] = 0
-
 proc checkedMove*(chess: var Chess, move: Move): bool {.discardable.} =
   ## Tries to make a `move` in a given `chess``.
   ## This process checks for the legality of the move and performs the switch
@@ -757,13 +767,13 @@ proc checkedMove*(chess: var Chess, move: Move): bool {.discardable.} =
   move = getMove(start, dest, color)
   if (piece == WPawn * ord(color)):
     createEnPassant = dest in chess.genPawnDoubleDests(start, color)
-    capturedEnPassant = (chess.board[dest] == -1 * ord(color) * WEnPassant)
+    capturedEnPassant = (dest == chess.enPassantSquare)
     fiftyMoveRuleReset = true
   if (chess.board[move.dest] != 0):
     fiftyMoveRuleReset = true
   sequence.add(chess.genLegalMoves(start, color))
   if (move in sequence):
-    chess.board.removeEnPassant(color)
+    chess.enPassantSquare = -1
     if (piece == WKing * ord(color) and (start - dest == (W+W))):
       return chess.castling(start, true, color)
     elif (piece == WKing * ord(color) and (start - dest == (E+E))):
@@ -772,19 +782,21 @@ proc checkedMove*(chess: var Chess, move: Move): bool {.discardable.} =
       chess.uncheckedMove(start, dest)
     chess.toMove = Color(ord(chess.toMove)*(-1))
     if createEnPassant:
-      chess.board[dest - (N * ord(color))] = WEnPassant * ord(color)
+      chess.enPassantSquare = dest - (N * ord(color))
     if capturedEnPassant:
       chess.board[dest - (N * ord(color))] = 0
-    if ((90 < dest and dest < 99) or (20 < dest and dest < 29)) and
+    if ((fieldToInd("h8") < dest and dest < fieldToInd("a8")) or (fieldToInd("h1") < dest and dest < fieldToInd("a1"))) and
         chess.board[dest] == WPawn * ord(color):
       chess.board[dest] = prom
     var prevBoard = chess.previousBoard
     var prevCastle = chess.previousCastleRights
     chess.previousBoard.add(chess.board)
     chess.previousCastleRights.add(chess.castleRights)
-    chess.fiftyMoveCounter = chess.fiftyMoveCounter + 1
+    chess.halfMoveClock = chess.halfMoveClock + 1
+    if color == Color.Black:
+      chess.fullMoveCounter += 1
     if fiftyMoveRuleReset:
-      chess.fiftyMoveCounter = 0
+      chess.halfMoveClock = 0
     return true
 
 proc isCheckmate*(chess: Chess, color: Color): bool =
@@ -807,7 +819,7 @@ proc threeMoveRep(chess: Chess): bool =
 
 proc isDrawClaimable*(chess: Chess): bool =
   ## Returns true if a draw is claimable by either player.
-  return chess.threeMoveRep() or chess.fiftyMoveCounter >= 100
+  return chess.threeMoveRep() or chess.halfMoveClock >= 100
 
 proc checkInsufficientMaterial(board: Board): bool =
   ## Checks for combinations of pieces on a `board`, where no checkmate can be

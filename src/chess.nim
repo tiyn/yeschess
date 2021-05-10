@@ -22,7 +22,6 @@ type
     board*: Board
     toMove*: Color
     previousBoard: seq[Board]
-    previousCastleRights: seq[CastleRights]
     halfMoveClock: int
     fullMoveCounter*: int
     castleRights: CastleRights
@@ -578,18 +577,30 @@ proc uncheckedMove(chess: var Chess, start: int, dest: int): bool {.discardable.
   chess.board[start] = 0
   chess.board[dest] = piece
   if start == fieldToInd("e1"):
+    if chess.castleRights.wk or chess.castleRights.wq:
+      chess.previousBoard = @[]
     chess.castleRights.wk = false
     chess.castleRights.wq = false
   elif start == fieldToInd("h1"):
+    if chess.castleRights.wk:
+      chess.previousBoard = @[]
     chess.castleRights.wk = false
   elif start == fieldToInd("a1"):
+    if chess.castleRights.wq:
+      chess.previousBoard = @[]
     chess.castleRights.wq = false
   elif start == fieldToInd("e8"):
+    if chess.castleRights.bk or chess.castleRights.bq:
+      chess.previousBoard = @[]
     chess.castleRights.bk = false
     chess.castleRights.bq = false
   elif start == fieldToInd("h8"):
+    if chess.castleRights.bk:
+      chess.previousBoard = @[]
     chess.castleRights.bk = false
   elif start == fieldToInd("a8"):
+    if chess.castleRights.bq:
+      chess.previousBoard = @[]
     chess.castleRights.bq = false
   return true
 
@@ -744,6 +755,7 @@ proc castling(chess: var Chess, kstart: int, dest_kingside: bool,
       return false
     chess.uncheckedMove(kstart, kdest)
     chess.uncheckedMove(rstart, rdest)
+    chess.previousBoard = @[]
     chess.toMove = Color(ord(chess.toMove) * (-1))
     return true
   return false
@@ -758,7 +770,6 @@ proc checkedMove*(chess: var Chess, move: Move): bool {.discardable.} =
   let prom = move.prom
   if (chess.toMove != color or start == -1 or dest == -1):
     return false
-  var sequence = newSeq[Move]()
   let piece = chess.board[start]
   var createEnPassant: bool
   var capturedEnPassant: bool
@@ -771,8 +782,7 @@ proc checkedMove*(chess: var Chess, move: Move): bool {.discardable.} =
     fiftyMoveRuleReset = true
   if (chess.board[move.dest] != 0):
     fiftyMoveRuleReset = true
-  sequence.add(chess.genLegalMoves(start, color))
-  if (move in sequence):
+  if (move in chess.genLegalMoves(start, color)):
     chess.enPassantSquare = -1
     if (piece == WKing * ord(color) and (start - dest == (W+W))):
       return chess.castling(start, true, color)
@@ -788,15 +798,13 @@ proc checkedMove*(chess: var Chess, move: Move): bool {.discardable.} =
     if ((fieldToInd("h8") < dest and dest < fieldToInd("a8")) or (fieldToInd("h1") < dest and dest < fieldToInd("a1"))) and
         chess.board[dest] == WPawn * ord(color):
       chess.board[dest] = prom
-    var prevBoard = chess.previousBoard
-    var prevCastle = chess.previousCastleRights
     chess.previousBoard.add(chess.board)
-    chess.previousCastleRights.add(chess.castleRights)
     chess.halfMoveClock = chess.halfMoveClock + 1
     if color == Color.Black:
       chess.fullMoveCounter += 1
     if fiftyMoveRuleReset:
       chess.halfMoveClock = 0
+      chess.previousBoard = @[]
     return true
 
 proc isCheckmate*(chess: Chess, color: Color): bool =
@@ -806,19 +814,17 @@ proc isCheckmate*(chess: Chess, color: Color): bool =
 proc threeMoveRep(chess: Chess): bool =
   ## Returns true if a 3-fold repitition happened on the last move of the
   ## `chess`.
-  if chess.previousBoard == []:
+  if chess.previousBoard == @[]:
     return false
   var lastState = chess.previousBoard[chess.previousBoard.high]
-  var lastCastleRights = chess.previousCastleRights[chess.previousBoard.high]
   var reps: int
   for stateInd in (chess.previousBoard.low)..(chess.previousBoard.high):
-    if (chess.previousBoard[stateInd] == lastState and
-        chess.previousCastleRights[stateInd] == lastCastleRights):
+    if (chess.previousBoard[stateInd] == lastState):
       reps = reps + 1
   return reps >= 3
 
 proc isDrawClaimable*(chess: Chess): bool =
-  ## Returns true if a draw is claimable by either player.
+  ## Returns true if a draw is claimable by the current player.
   return chess.threeMoveRep() or chess.halfMoveClock >= 100
 
 proc checkInsufficientMaterial(board: Board): bool =

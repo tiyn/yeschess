@@ -792,11 +792,14 @@ proc checkedMove*(chess: var Chess, move: Move): bool {.discardable.} =
       chess.uncheckedMove(start, dest)
     chess.toMove = Color(ord(chess.toMove)*(-1))
     if createEnPassant:
-      chess.enPassantSquare = dest - (N * ord(color))
+      if chess.board[dest + E] == BPawn * ord(color) or
+        chess.board[dest + W] == BPawn * ord(color):
+        chess.enPassantSquare = dest - (N * ord(color))
     if capturedEnPassant:
       chess.board[dest - (N * ord(color))] = 0
-    if ((fieldToInd("h8") < dest and dest < fieldToInd("a8")) or (fieldToInd("h1") < dest and dest < fieldToInd("a1"))) and
-        chess.board[dest] == WPawn * ord(color):
+    if ((fieldToInd("h8") < dest and dest < fieldToInd("a8")) or
+      (fieldToInd("h1") < dest and dest < fieldToInd("a1"))) and
+      chess.board[dest] == WPawn * ord(color):
       chess.board[dest] = prom
     chess.previousBoard.add(chess.board)
     chess.halfMoveClock = chess.halfMoveClock + 1

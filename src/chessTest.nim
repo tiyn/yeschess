@@ -804,9 +804,13 @@ testSuite ChessTest of TestSuite:
     self.chess = pos
     test = self.chess.checkedMove(notationToMove("e1c1", Color.White))
     self.check(test)
+    self.check(self.chess.board[fieldToInd("c1")] == WKing)
+    self.check(self.chess.board[fieldToInd("d1")] == WRook)
     self.chess = pos
-    self.chess.checkedMove(notationToMove("e1g1", Color.White))
+    test = self.chess.checkedMove(notationToMove("e1g1", Color.White))
     self.check(test)
+    self.check(self.chess.board[fieldToInd("g1")] == WKing)
+    self.check(self.chess.board[fieldToInd("f1")] == WRook)
 
   method testCheckedMoveKingCastleTrueBlack() =
     var test: bool
@@ -814,9 +818,13 @@ testSuite ChessTest of TestSuite:
     self.chess = pos
     test = self.chess.checkedMove(notationToMove("e8c8", Color.Black))
     self.check(test)
+    self.check(self.chess.board[fieldToInd("c8")] == BKing)
+    self.check(self.chess.board[fieldToInd("d8")] == BRook)
     self.chess = pos
     test = self.chess.checkedMove(notationToMove("e8g8", Color.Black))
     self.check(test)
+    self.check(self.chess.board[fieldToInd("g8")] == BKing)
+    self.check(self.chess.board[fieldToInd("f8")] == BRook)
 
   method testCheckedMoveKingCastleFalseAlreadyMovedKing() =
     var test: bool

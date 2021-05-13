@@ -78,8 +78,8 @@ const
     ## `BKing` is the value assigned to a square in a board with a black king.
   N = 10 ## `N` describes a move a field up the board from whites perspective.
   S = -N ## `S` describes a move a field down the board from whites perspective.
-  E = 1 ## `E` describes a move a field to the right from whites perspective.
-  W = -E ## `W` describes a move a field to the left from whites perspective.
+  W = 1 ## `W` describes a move a field to the left from whites perspective.
+  E = -W ## `E` describes a move a field to the right from whites perspective.
   # Directions for the pieces. Special moves are in separate arrays.
   Knight_Moves = @[N+N+E, N+N+W, E+E+N, E+E+S, S+S+E, S+S+W, W+W+N, W+W+S] ## \
     ## `Knight_Moves` describes the possible knight moves.
@@ -176,6 +176,8 @@ proc notationToMove*(notation: string, color: Color): Move =
   ## Convert and return simplified algebraic chess `notation` to a move object,
   ## color of player is `color`.
   var move: Move
+  if notation.len < 4:
+    return getMove(-1, -1, -1, color)
   var start = fieldToInd(notation[0..1])
   var dest = fieldToInd(notation[2..3])
   move = getMove(start, dest, color)
@@ -183,13 +185,13 @@ proc notationToMove*(notation: string, color: Color): Move =
     var promStr = $notation[4]
     let prom = case promStr:
       of "R":
-        WRook * ord(color)
+        WRook
       of "B":
-        WBishop * ord(color)
+        WBishop
       of "N":
-        WKnight * ord(color)
+        WKnight
       else:
-        WQueen * ord(color)
+        WQueen
     move = getMove(start, dest, prom, color)
   return move
 
@@ -302,7 +304,7 @@ proc convertToFen*(chess: Chess): string =
   var fen: string
   var spaceOcc: int
   var fileCounter = 0
-  for piece in chess.board.reversed:
+  for i, piece in chess.board.reversed:
     if not (piece == Block):
       if fileCounter == 8:
         if spaceOcc != 0:
@@ -318,6 +320,8 @@ proc convertToFen*(chess: Chess): string =
           spaceOcc = 0
         pieces &= PieceChar[piece]
       fileCounter += 1
+    if i == chess.board.reversed.high and spaceOcc > 0:
+      pieces &= $spaceOcc
   fen &= pieces & " "
   if chess.toMove == Color.White:
     fen &= "w "
@@ -577,30 +581,18 @@ proc uncheckedMove(chess: var Chess, start: int, dest: int): bool {.discardable.
   chess.board[start] = 0
   chess.board[dest] = piece
   if start == fieldToInd("e1"):
-    if chess.castleRights.wk or chess.castleRights.wq:
-      chess.previousBoard = @[]
     chess.castleRights.wk = false
     chess.castleRights.wq = false
   elif start == fieldToInd("h1"):
-    if chess.castleRights.wk:
-      chess.previousBoard = @[]
     chess.castleRights.wk = false
   elif start == fieldToInd("a1"):
-    if chess.castleRights.wq:
-      chess.previousBoard = @[]
     chess.castleRights.wq = false
   elif start == fieldToInd("e8"):
-    if chess.castleRights.bk or chess.castleRights.bq:
-      chess.previousBoard = @[]
     chess.castleRights.bk = false
     chess.castleRights.bq = false
   elif start == fieldToInd("h8"):
-    if chess.castleRights.bk:
-      chess.previousBoard = @[]
     chess.castleRights.bk = false
   elif start == fieldToInd("a8"):
-    if chess.castleRights.bq:
-      chess.previousBoard = @[]
     chess.castleRights.bq = false
   return true
 
@@ -726,37 +718,37 @@ proc castling(chess: var Chess, kstart: int, dest_kingside: bool,
   var rdest: int
   var rights: bool
   if (dest_kingside):
-    kdest = kstart + (E+E)
-    rstart = kstart + (E+E+E)
-    rdest = rstart + (W+W)
+    kdest = kstart + E + E
+    rstart = kstart + E + E + E
+    rdest = rstart + W + W
     if (color == Color.White):
       rights = chess.castleRights.wk
     else:
       rights = chess.castleRights.bk
   else:
-    rstart = kstart + (W+W+W+W)
-    rdest = rstart + (E+E+E)
-    kdest = kstart + (W+W)
+    kdest = kstart + W + W
+    rstart = kstart + W + W + W + W
+    rdest = rstart + E + E + E
     if (color == Color.White):
-      rights = chess.castleRights.bq
+      rights = chess.castleRights.wq
     else:
       rights = chess.castleRights.bq
   if (rights):
-    var check: bool
     if (dest_kingside):
-      check = check or chess.isAttacked(kstart, color)
-      check = check or chess.isAttacked(kstart+(E), color)
-      check = check or chess.isAttacked(kstart+(E+E), color)
+      if chess.isAttacked(kstart, color) or chess.isAttacked(kstart+E, color) or
+        chess.isAttacked(kstart+E+E, color) or chess.board[kstart+E] != 0 or
+        chess.board[kstart+E+E] != 0:
+        return false
     else:
-      check = check or chess.isAttacked(kstart, color)
-      check = check or chess.isAttacked(kstart+(W), color)
-      check = check or chess.isAttacked(kstart+(W+W), color)
-    if check:
-      return false
+      if chess.isAttacked(kstart, color) or chess.isAttacked(kstart+W, color) or
+        chess.isAttacked(kstart+W+W, color) or chess.board[kstart+W] != 0 or
+        chess.board[kstart+W+W] != 0 or chess.board[kstart+W+W+W] != 0:
+        return false
     chess.uncheckedMove(kstart, kdest)
     chess.uncheckedMove(rstart, rdest)
-    chess.previousBoard = @[]
+    chess.previousBoard = @[chess.board]
     chess.toMove = Color(ord(chess.toMove) * (-1))
+    chess.enPassantSquare = -1
     return true
   return false
 
@@ -776,6 +768,10 @@ proc checkedMove*(chess: var Chess, move: Move): bool {.discardable.} =
   var fiftyMoveRuleReset: bool
   var move: Move
   move = getMove(start, dest, color)
+  if (piece == WKing * ord(color) and (start - dest == (W+W))):
+    return chess.castling(start, true, color)
+  elif (piece == WKing * ord(color) and (start - dest == (E+E))):
+    return chess.castling(start, false, color)
   if (piece == WPawn * ord(color)):
     createEnPassant = dest in chess.genPawnDoubleDests(start, color)
     capturedEnPassant = (dest == chess.enPassantSquare)
@@ -784,22 +780,13 @@ proc checkedMove*(chess: var Chess, move: Move): bool {.discardable.} =
     fiftyMoveRuleReset = true
   if (move in chess.genLegalMoves(start, color)):
     chess.enPassantSquare = -1
-    if (piece == WKing * ord(color) and (start - dest == (W+W))):
-      return chess.castling(start, true, color)
-    elif (piece == WKing * ord(color) and (start - dest == (E+E))):
-      return chess.castling(start, false, color)
-    else:
-      chess.uncheckedMove(start, dest)
+    chess.uncheckedMove(start, dest)
     chess.toMove = Color(ord(chess.toMove)*(-1))
-    if createEnPassant:
-      if chess.board[dest + E] == BPawn * ord(color) or
-        chess.board[dest + W] == BPawn * ord(color):
-        chess.enPassantSquare = dest - (N * ord(color))
     if capturedEnPassant:
       chess.board[dest - (N * ord(color))] = 0
-    if ((fieldToInd("h8") < dest and dest < fieldToInd("a8")) or
-      (fieldToInd("h1") < dest and dest < fieldToInd("a1"))) and
-      chess.board[dest] == WPawn * ord(color):
+    if ((fieldToInd("h8") <= dest and dest <= fieldToInd("a8")) or
+      (fieldToInd("h1") <= dest and dest <= fieldToInd("a1"))) and
+      piece == WPawn * ord(color):
       chess.board[dest] = prom
     chess.previousBoard.add(chess.board)
     chess.halfMoveClock = chess.halfMoveClock + 1
@@ -807,7 +794,11 @@ proc checkedMove*(chess: var Chess, move: Move): bool {.discardable.} =
       chess.fullMoveCounter += 1
     if fiftyMoveRuleReset:
       chess.halfMoveClock = 0
-      chess.previousBoard = @[]
+      chess.previousBoard = @[chess.board]
+    if createEnPassant and (chess.board[dest + E] == BPawn * ord(color) or
+        chess.board[dest + W] == BPawn * ord(color)):
+        chess.enPassantSquare = dest - (N * ord(color))
+        chess.previousBoard = @[]
     return true
 
 proc isCheckmate*(chess: Chess, color: Color): bool =

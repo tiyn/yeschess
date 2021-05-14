@@ -1,6 +1,6 @@
 # ychess
 
-![ychess-logo](ychess.png)
+![ychess-logo](./art/ychess.png)
 
 ychess is a chess implementation and engine written in nim.
 
@@ -26,7 +26,7 @@ You can simply run the tests with `nim c -r test.nim`.
 
 Documentation is written into the code via DocGen.
 For this reason it is not saved in this repository.
-To extract it into html run `nim doc --project --index:on --outdir:htmldocs game.nim`
+To extract it into html run `nim doc --project --index:on --outdir:docs game.nim`
 
 ### Moves
 

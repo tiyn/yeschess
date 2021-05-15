@@ -1,7 +1,7 @@
 import parseutils
 
-import ./chess.nim
-import ./engine.nim
+import chess
+import engine/engine
 
 proc runGameHotseat*(): void =
   ## Initializes and runs a game of chess as hotseat.

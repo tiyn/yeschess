@@ -1,7 +1,7 @@
 import einheit
 
 include chess
-include engine
+include engine/engine
 
 testSuite ChessTest of TestSuite:
 

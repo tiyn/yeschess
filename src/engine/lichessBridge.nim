@@ -1,9 +1,9 @@
 import nimpy
 import asyncnet, asyncdispatch
 
-import ./secret.nim
-import ./chess.nim
-import ./engine.nim
+import chess
+import engine/secret
+import engine/engine
 
 let berserk = pyImport("berserk")
 
@@ -11,7 +11,7 @@ var session = berserk.TokenSession(secret.api_token)
 var client = berserk.Client(session = session)
 
 let engineID = "tiyn-ychess"
-let engineDifficulty = 3
+let engineDifficulty = 2
 let toAccept = ["tiynger"]
 
 

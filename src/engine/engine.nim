@@ -1,6 +1,6 @@
 import algorithm
 
-import ./chess.nim
+import chess
 
 type
   MoveTree = object
@@ -184,7 +184,7 @@ proc bestMove*(chess: Chess, depth: int): Move =
     var tmpChess = chess
     tmpChess.checkedMove(move)
     var tmpEval = -tmpChess.negaMax(depth, LoVal, HiVal)
-    #echo("move:", moveToNotation(move, tmpChess.board), "; eval:", tmpEval)
+    echo("move:", moveToNotation(move, tmpChess.board), "; eval:", tmpEval)
     if tmpEval > bestEval:
       bestEval = tmpEval
       bestMove = move

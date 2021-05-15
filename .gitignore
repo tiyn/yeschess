@@ -1,6 +1,6 @@
 *.db
 
 bin
-docs
+htmldocs
 pgn
 secret.nim

@@ -15,6 +15,7 @@ let dbName = ""
 let tableName = "posmoves"
 
 proc initDB*(): void =
+  ## Initialize the database with a table if it doesnt currently exist.
   let db = open(dbConn, dbUser, dbPasswd, dbName)
   db.exec(sql"""CREATE TABLE IF NOT EXISTS ? (
                    fen    VARCHAR(100) NOT NULL,
@@ -30,6 +31,9 @@ proc initDB*(): void =
 
 proc storeMove*(fen: string, move: string, white: bool, black: bool, draw: bool,
     rating: int): void =
+  ## Store a possible `move` done by a player with `rating` (0 for unknown)
+  ## in a position described by `fen`.
+  ## The result of the game is described by `white`, `black` and `draw`.
   let db = open(dbConn, dbUser, dbPasswd, dbName)
   var query = """
     INSERT INTO ? (fen, move, white, black, draw, rating)

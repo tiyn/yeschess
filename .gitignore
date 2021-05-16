@@ -1,6 +1,6 @@
-*.db
+secret.nim
+nim.cfg
 
 bin
 htmldocs
-pgn
-secret.nim
+ressources

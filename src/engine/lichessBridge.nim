@@ -2,7 +2,7 @@ import nimpy
 import asyncnet, asyncdispatch
 
 import chess
-import secret
+import engine/secret
 import engine/engine
 
 let berserk = pyImport("berserk")

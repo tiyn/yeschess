@@ -3,10 +3,12 @@ import sequtils
 import strutils
 import sugar
 import tables
+import os
 
 include chess
 
 import secret
+import project
 
 type
   BookMove* = object
@@ -20,7 +22,7 @@ type
     rating*: int # `rating` is the average rating of the player to move.
 
 
-let dbConn = projectdir & "src/engine/openings.db"
+let dbConn = joinPath(getProjRootDir(), "ressources/openings.db")
 let dbUser = ""
 let dbPasswd = ""
 let dbName = ""

@@ -3,18 +3,31 @@ import sequtils
 import strutils
 import sugar
 import tables
-import os
 
 include chess
 
-let dbConn = "openings.db"
+import secret
+
+type
+  BookMove* = object
+    ## `PossibleMove` capsulates a possible moves in a position with additional
+    ## statistics.
+    fen*: string # `fen` is the fen string of a position.
+    move*: string # `move` describes a move in pure coordinate notation.
+    white*: int # `white` is the number of game white won from this position.
+    black*: int # `black` is the number of game black won from this position.
+    draw*: int # `draw` is the number of game drawn from this position.
+    rating*: int # `rating` is the average rating of the player to move.
+
+
+let dbConn = projectdir & "src/engine/openings.db"
 let dbUser = ""
 let dbPasswd = ""
 let dbName = ""
 
 let tableName = "posmoves"
 
-proc initDB*(): void =
+proc initDB(): void =
   ## Initialize the database with a table if it doesnt currently exist.
   let db = open(dbConn, dbUser, dbPasswd, dbName)
   db.exec(sql"""CREATE TABLE IF NOT EXISTS ? (
@@ -29,7 +42,7 @@ proc initDB*(): void =
   db.close()
   echo("Database initialization done.")
 
-proc storeMove*(fen: string, move: string, white: bool, black: bool, draw: bool,
+proc storeMove(fen: string, move: string, white: bool, black: bool, draw: bool,
     rating: int): void =
   ## Store a possible `move` done by a player with `rating` (0 for unknown)
   ## in a position described by `fen`.
@@ -54,7 +67,9 @@ proc storeMove*(fen: string, move: string, white: bool, black: bool, draw: bool,
   echo("inserted (", join([fen, move, $white, $black, $draw, $rating], ", "),
       ") into ", tableName)
 
-proc loadMove*(fen: string): seq[Row] =
+proc loadMove*(fen: string): seq[BookMove] =
+  ## Load all possible moves possible in a given position described by `fen`
+  ## from the database. Format moves as a BookMove object.
   let db = open(dbConn, dbUser, dbPasswd, dbName)
   let res = db.getAllRows(sql """SELECT move, white, black, draw, rating
                             FROM ?
@@ -62,7 +77,17 @@ proc loadMove*(fen: string): seq[Row] =
                             ORDER BY rating DESC
                             """, tableName, fen)
   db.close()
-  return res
+  var fRes: seq[BookMove]
+  for entry in res:
+    var bookMv: BookMove
+    bookMv.fen = fen
+    bookMv.move = entry[0]
+    bookMv.white = parseInt(entry[1])
+    bookMv.black = parseInt(entry[2])
+    bookMv.draw = parseInt(entry[3])
+    bookMv.rating = parseInt(entry[4])
+    fRes.add(bookMv)
+  return fRes
 
 proc sanToPcn(sanMoves: string): string =
   ## Convert a list of `sanMoves` to pure coordinate notation (assuming the game
@@ -224,5 +249,6 @@ proc iterMultiPGN(fileP: string): void =
     else:
       sanMoves &= line
 
-
-initDB()
+when isMainModule:
+  initDB()
+  #iterMultiPGN("file.pgn")

@@ -15,10 +15,10 @@ proc runGameHotseat*(): void =
     while not chess.checkedMove(notationToMove(move, chess.toMove)):
       move = readLine(stdin)
     chess.echoBoard(chess.toMove)
-    if (chess.isDrawClaimable()):
+    if chess.isDrawClaimable():
       echo "Do you want to claim a draw? (y/N)"
       draw = readLine(stdin)
-      if (draw == "y"):
+      if draw == "y":
         echo "Draw claimed"
         break
   if chess.isCheckmate(chess.toMove):
@@ -33,17 +33,17 @@ proc runGameSolo*(color: Color, difficulty: int): void =
   var chess = initChess()
   var draw: string
   while not chess.isCheckmate(chess.toMove) and not chess.isStalemate(chess.toMove):
-    if (chess.toMove == color):
+    if chess.toMove == color:
       chess.echoBoard(color)
       echo "Make a move"
       var hMove = readLine(stdin)
       while not chess.checkedMove(notationToMove(hMove, chess.toMove)):
         hMove = readLine(stdin)
       chess.echoBoard(color)
-      if (chess.isDrawClaimable):
+      if chess.isDrawClaimable():
         echo "Do you want to claim a draw? (y/N)"
         draw = readLine(stdin)
-        if (draw == "y"):
+        if draw == "y":
           echo "Draw claimed"
           break
     else:
@@ -63,7 +63,7 @@ proc menu(): void =
     echo("How many players? (1/2)")
     input = readLine(stdin)
     discard parseInt(input, playerCount, 0)
-    if (playerCount == 1 or playerCount == 2):
+    if playerCount == 1 or playerCount == 2:
       break
   if playerCount == 1:
     var color: string
@@ -72,16 +72,16 @@ proc menu(): void =
       echo("Choose the difficulty for the engine (1-10)")
       input = readLine(stdin)
       discard parseInt(input, difficulty, 0)
-      if (difficulty >= 1 and difficulty <= 10):
+      if difficulty >= 1 and difficulty <= 10:
         break
     while true:
       echo("Do you want to play Black or White? (B/W)")
       color = readLine(stdin)
-      if (color == "B"):
+      if color == "B":
         echo("\n\n\n")
         runGameSolo(Color.Black, difficulty)
         break
-      elif (color == "W"):
+      elif color == "W":
         echo("\n\n\n")
         runGameSolo(Color.White, difficulty)
         break

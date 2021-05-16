@@ -153,7 +153,7 @@ proc fieldToInd(field: string): int =
 proc indToField(ind: int): string =
   ## Calculate and returns field name from board index `ind`.
   let line = int(ind / 10 - 1)
-  let file_ind = 7 - ((ind) %% 10 - 1)
+  let file_ind = 7 - (ind %% 10 - 1)
   for file, i in FileChar:
     if FileChar[file] == file_ind:
       return $file & $line
@@ -162,7 +162,7 @@ proc getMove(start: int, dest: int, prom: int, color: Color): Move =
   ## Get a move object of the `color` player from `start` to `dest` with an
   ## eventual promition to `prom`.
   var move = Move(start: start, dest: dest, prom: prom * ord(color), color: color)
-  if (prom < WKnight or prom > WQueen):
+  if prom < WKnight or prom > WQueen:
     move.prom = WQueen
   return move
 
@@ -181,7 +181,7 @@ proc notationToMove*(notation: string, color: Color): Move =
   var start = fieldToInd(notation[0..1])
   var dest = fieldToInd(notation[2..3])
   move = getMove(start, dest, color)
-  if (len(notation) > 4):
+  if notation.len > 4:
     var promStr = $notation[4]
     let prom = case promStr:
       of "R":
@@ -351,22 +351,22 @@ proc echoBoard*(chess: Chess, color: Color) =
   ## Prints out the given `board` with its pieces as characters and line
   ## indices from perspecive of `color`.
   var line_str: string
-  if (color == Color.Black):
-    for i in 0..len(chess.board)-1:
-      if (chess.board[i] == Block):
+  if color == Color.Black:
+    for i in 0..chess.board.len-1:
+      if chess.board[i] == Block:
         continue
       line_str &= PieceChar[chess.board[i]] & " "
-      if ((i + 2) %% 10 == 0):
-        line_str &= $(int((i / 10) - 1)) & "\n"
+      if (i + 2) %% 10 == 0:
+        line_str &= $int((i / 10) - 1) & "\n"
     echo line_str
     echo "h g f e d c b a"
   else:
     for i in countdown(len(chess.board) - 1, 0):
-      if (chess.board[i] == Block):
+      if chess.board[i] == Block:
         continue
       line_str &= PieceChar[chess.board[i]] & " "
-      if ((i - 1) %% 10 == 0):
-        line_str &= $(int((i / 10) - 1)) & "\n"
+      if (i - 1) %% 10 == 0:
+        line_str &= $int((i / 10) - 1) & "\n"
     echo line_str
     echo "a b c d e f g h"
 
@@ -374,7 +374,7 @@ proc genPawnAttackDests(chess: Chess, field: int, color: Color): seq[int] =
   ## Generate possible attack destinations for a pawn with specific `color`
   ## located at index `field` of `chess`.
   ## Returns a sequence of possible indices to move to.
-  if (not field in chess.board.low..chess.board.high):
+  if field < chess.board.low or field > chess.board.high:
     return @[]
   var res = newSeq[int]()
   var dest: int
@@ -395,7 +395,7 @@ proc genPawnDoubleDests(chess: Chess, field: int, color: Color): seq[int] =
   ## Generate possible double destinations for a pawn with specific `color`
   ## located at index `field` of `chess`.
   ## Returns a sequence of possible indices to move to.
-  if (not field in chess.board.low..chess.board.high):
+  if field < chess.board.low or field > chess.board.high:
     return @[]
   var res = newSeq[int]()
   var dest: int
@@ -403,12 +403,12 @@ proc genPawnDoubleDests(chess: Chess, field: int, color: Color): seq[int] =
   for doubles in Pawn_Moves_White_Double:
     dest = field + doubles * ord(color)
     target = chess.board[dest]
-    if ((target != 0) or (
-        chess.board[dest + (S * ord(color))] != 0)):
+    if target != 0 or
+        chess.board[dest + (S * ord(color))] != 0:
       continue
-    if (color == Color.White and not (field in fieldToInd("h2")..fieldToInd("a2"))):
+    if color == Color.White and not (field in fieldToInd("h2")..fieldToInd("a2")):
       continue
-    if (color == Color.Black and not (field in fieldToInd("h7")..fieldToInd("a7"))):
+    if color == Color.Black and not (field in fieldToInd("h7")..fieldToInd("a7")):
       continue
     res.add(dest)
   return res
@@ -417,17 +417,17 @@ proc genPawnDests(chess: Chess, field: int, color: Color): seq[int] =
   ## Generate possible destinations for a pawn with specific `color` located at
   ## index `field` of `chess`.
   ## Returns a sequence of possible indices to move to.
-  if (not field in chess.board.low..chess.board.high):
+  if field < chess.board.low or field > chess.board.high:
     return @[]
   var res = newSeq[int]()
   var dest: int
   var target: int
   for move in Pawn_Moves_White:
     dest = field + move * ord(color)
-    if (not dest in chess.board.low..chess.board.high):
+    if not dest in chess.board.low..chess.board.high:
       continue
     target = chess.board[dest]
-    if (target != 0 and dest != chess.enPassantSquare):
+    if target != 0 and dest != chess.enPassantSquare:
       continue
     res.add(dest)
   res.add(chess.genPawnAttackDests(field, color))
@@ -438,17 +438,17 @@ proc genKnightDests(chess: Chess, field: int, color: Color): seq[int] =
   ## Generate possible destinations for a knight with specific `color` located
   ## at index `field` of `chess`.
   ## Returns a sequence of possible indices to move to.
-  if (not field in chess.board.low..chess.board.high):
+  if field < chess.board.low or field > chess.board.high:
     return @[]
   var res = newSeq[int]()
   var dest: int
   var target: int
   for move in Knight_Moves:
     dest = field + move
-    if (not dest in chess.board.low..chess.board.high):
+    if not dest in chess.board.low..chess.board.high:
       continue
     target = chess.board[dest]
-    if (target == Block or (ord(color) * target > 0)):
+    if target == Block or ord(color) * target > 0:
       continue
     res.add(dest)
   return res
@@ -458,19 +458,19 @@ proc genSlidePieceDests(chess: Chess, field: int, color: Color, moves: seq[
   ## Generate possible destinations for a piece with `moves` and specific `color`
   ## located at index `field` of `chess`.
   ## Returns a sequence of possible indices to move to.
-  if (not field in chess.board.low..chess.board.high):
+  if field < chess.board.low or field > chess.board.high:
     return @[]
   var res = newSeq[int]()
   var dest: int
   var target: int
   for move in moves:
     dest = field + move
-    if (not dest in chess.board.low..chess.board.high):
+    if not dest in chess.board.low..chess.board.high:
       continue
     target = chess.board[dest]
-    while (target != Block and (ord(color) * target <= 0)):
+    while target != Block and ord(color) * target <= 0:
       res.add(dest)
-      if (ord(color) * target < 0):
+      if ord(color) * target < 0:
         break
       dest = dest + move
       target = chess.board[dest]
@@ -498,7 +498,7 @@ proc genKingCastleDest(chess: Chess, field: int, color: Color): seq[int] =
   ## Generate possible castle destinations for a king with specific `color`
   ## located at index `field` of `chess`
   ## Returns a sequence of possible indices to move to.
-  if (not field in chess.board.low..chess.board.high):
+  if field < chess.board.low or field > chess.board.high:
     return @[]
   var res = newSeq[int]()
   var dest: int
@@ -507,14 +507,14 @@ proc genKingCastleDest(chess: Chess, field: int, color: Color): seq[int] =
   var half_target: int
   for castle in King_Moves_White_Castle:
     dest = field + castle
-    if (not dest in chess.board.low..chess.board.high):
+    if not dest in chess.board.low..chess.board.high:
       continue
     target = chess.board[dest]
     half_dest = field + int(castle / 2)
     half_target = chess.board[half_dest]
-    if (target == Block or (target != 0)):
+    if target == Block or target != 0:
       continue
-    if (half_target == Block or (half_target != 0)):
+    if half_target == Block or half_target != 0:
       continue
     res.add(dest)
   return res
@@ -523,17 +523,17 @@ proc genKingDests(chess: Chess, field: int, color: Color): seq[int] =
   ## Generate possible destinations for a king with specific `color`
   ## located at index `field` of `chess`.
   ## Returns a sequence of possible indices to move to.
-  if (not field in chess.board.low..chess.board.high):
+  if field < chess.board.low or field > chess.board.high:
     return @[]
   var res = newSeq[int]()
   var dest: int
   var target: int
   for move in King_Moves:
     dest = field + move
-    if (not dest in chess.board.low..chess.board.high):
+    if not dest in chess.board.low..chess.board.high:
       continue
     target = chess.board[dest]
-    if (target == Block or (ord(color) * target > 0)):
+    if target == Block or ord(color) * target > 0:
       continue
     res.add(dest)
   res.add(chess.genKingCastleDest(field, color))
@@ -717,11 +717,11 @@ proc castling(chess: var Chess, kstart: int, dest_kingside: bool,
   var rstart: int
   var rdest: int
   var rights: bool
-  if (dest_kingside):
+  if dest_kingside:
     kdest = kstart + E + E
     rstart = kstart + E + E + E
     rdest = rstart + W + W
-    if (color == Color.White):
+    if color == Color.White:
       rights = chess.castleRights.wk
     else:
       rights = chess.castleRights.bk
@@ -729,12 +729,12 @@ proc castling(chess: var Chess, kstart: int, dest_kingside: bool,
     kdest = kstart + W + W
     rstart = kstart + W + W + W + W
     rdest = rstart + E + E + E
-    if (color == Color.White):
+    if color == Color.White:
       rights = chess.castleRights.wq
     else:
       rights = chess.castleRights.bq
-  if (rights):
-    if (dest_kingside):
+  if rights:
+    if dest_kingside:
       if chess.isAttacked(kstart, color) or chess.isAttacked(kstart+E, color) or
         chess.isAttacked(kstart+E+E, color) or chess.board[kstart+E] != 0 or
         chess.board[kstart+E+E] != 0:
@@ -760,7 +760,7 @@ proc checkedMove*(chess: var Chess, move: Move): bool {.discardable.} =
   let dest = move.dest
   let color = move.color
   let prom = move.prom
-  if (chess.toMove != color or start == -1 or dest == -1):
+  if chess.toMove != color or start == -1 or dest == -1:
     return false
   let piece = chess.board[start]
   var createEnPassant: bool
@@ -768,17 +768,17 @@ proc checkedMove*(chess: var Chess, move: Move): bool {.discardable.} =
   var fiftyMoveRuleReset: bool
   var move: Move
   move = getMove(start, dest, color)
-  if (piece == WKing * ord(color) and (start - dest == (W+W))):
+  if piece == WKing * ord(color) and start - dest == (W+W):
     return chess.castling(start, true, color)
-  elif (piece == WKing * ord(color) and (start - dest == (E+E))):
+  elif piece == WKing * ord(color) and start - dest == (E+E):
     return chess.castling(start, false, color)
-  if (piece == WPawn * ord(color)):
+  if piece == WPawn * ord(color):
     createEnPassant = dest in chess.genPawnDoubleDests(start, color)
     capturedEnPassant = (dest == chess.enPassantSquare)
     fiftyMoveRuleReset = true
-  if (chess.board[move.dest] != 0):
+  if chess.board[move.dest] != 0:
     fiftyMoveRuleReset = true
-  if (move in chess.genLegalMoves(start, color)):
+  if move in chess.genLegalMoves(start, color):
     chess.enPassantSquare = -1
     chess.uncheckedMove(start, dest)
     chess.toMove = Color(ord(chess.toMove)*(-1))
@@ -812,8 +812,8 @@ proc threeMoveRep(chess: Chess): bool =
     return false
   var lastState = chess.previousBoard[chess.previousBoard.high]
   var reps: int
-  for stateInd in (chess.previousBoard.low)..(chess.previousBoard.high):
-    if (chess.previousBoard[stateInd] == lastState):
+  for stateInd in chess.previousBoard.low..chess.previousBoard.high:
+    if chess.previousBoard[stateInd] == lastState:
       reps = reps + 1
   return reps >= 3
 
@@ -839,7 +839,7 @@ proc checkInsufficientMaterial(board: Board): bool =
       pieces[4])
   let bpieces: PieceAmount = (pieces[5], pieces[6], pieces[7], pieces[8],
       pieces[9])
-  return (wpieces in InsufficientMaterial) and (bpieces in InsufficientMaterial)
+  return wpieces in InsufficientMaterial and bpieces in InsufficientMaterial
 
 proc isStalemate*(chess: Chess, color: Color): bool =
   ## Returns true if the `color` player is stalemate in a `chess`.

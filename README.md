@@ -52,3 +52,32 @@ The engine uses a simple implementation of the
 For the evaluation function each piece has a corresponding value.
 Additionally [piece-square tables](https://www.chessprogramming.org/Piece-Square_Tables)
 are used.
+
+## Contributing
+
+### Setup
+
+To setup the project for development you need to create the file
+`src/secret.nim`.
+It should contain values for the following variables:
+
+```nim
+let projectdir* = "<absolute path to root dir of ychess>"
+let api_token* = "<lichess api token for bot>"
+```
+
+### Code Style Guide
+
+Basic arithmetic operations should be surrounded by spaces for example: `1 + 3`.
+This however is not true for negation of a single value (`-1`) or if the
+arithmetic operation is done inside array brackets or in iterators (`a+1..3`,
+`a[c+3]`).
+
+Determining the length of a string, array, etc should not be done via a function
+(`len(array)`) but by appending it like `array.len`.
+
+If statements should not contain outer brackets.
+In some cases (especially concatenations of `and` and `or`) inner brackets are
+useful to increase readability in complexer logic formulas.
+
+When assigning booleans with logical formulas outer brackets are expected.
